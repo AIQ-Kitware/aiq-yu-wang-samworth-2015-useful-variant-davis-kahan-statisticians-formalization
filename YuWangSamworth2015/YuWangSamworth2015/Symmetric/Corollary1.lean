@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Jon Crall, Claude Opus 5
 -/
 import YuWangSamworth2015.GroundedImports
+import YuWangSamworth2015.Symmetric.Theorem2
 
 /-!
 # Corollary 1 with the source's neighbouring-eigenvalue gap
@@ -235,4 +236,97 @@ theorem yuWangSamworth_corollary1_scalarSample (w : E) (hw : ‖w‖ = 1) :
 end Degenerate
 
 end DavisKahanTheory
+
+/-! ## Paper-facing surface
+
+As for Theorem 2, these declarations are written for semantic review: real
+`Real^p`, the source's variable names, and the source's *exact* denominator
+rather than a lower bound for it.  `SourcePopulationGap Sigma hSigma j j Delta`
+is the rank-one instance of the same predicate Theorem 2 uses, so at `r = s = j`
+it says `Delta` is the greatest real with
+
+`Delta ≤ lambda_(j-1) - lambda_j` and `Delta ≤ lambda_j - lambda_(j+1)`,
+
+which is the printed `Delta_j = min(lambda_(j-1) - lambda_j, lambda_j - lambda_(j+1))`
+with a missing endpoint omitted; the `p = 1` case is the full-space branch, where
+both exterior gaps are the source's `+infinity`.
+
+Nothing here constrains the spectrum of `SigmaHat`, so `lambda-hat_j` may be
+repeated and `vHat` is an arbitrary admissible unit eigenvector.
+`yuWangSamworth_corollary1_scalarSample` above is the witness that this
+generality is not decorative. -/
+
+section PaperFacing
+
+open Module (finrank)
+
+/-- Source-facing operator norm notation for the paper-facing Corollary 1. -/
+local notation "‖" A "‖_op" => ‖LinearMap.toContinuousLinearMap A‖
+
+/-- **Yu--Wang--Samworth 2015, Corollary 1, first display.**
+
+For real symmetric `Sigma`, `SigmaHat` on `Real^p`, unit vectors `v` and `vHat`
+with `Sigma v = lambda_j v` and `SigmaHat vHat = lambda-hat_j vHat` at the `j`-th
+eigenvalue in nonincreasing order, and `Delta` the source's exact neighbouring
+population gap,
+
+`sin Theta(vHat, v) <= 2 ||SigmaHat - Sigma||_op / Delta`.
+
+There is no hypothesis on the spectrum of `SigmaHat`: `vHat` ranges over every
+admissible unit eigenvector, including at a repeated sample eigenvalue. -/
+theorem corollary1_sinTheta
+    {p j : Nat}
+    (Sigma SigmaHat : EuclideanSpace Real (Fin p) →ₗ[Real] EuclideanSpace Real (Fin p))
+    (hSigma : Sigma.IsSymmetric) (hSigmaHat : SigmaHat.IsSymmetric)
+    (hj : j < p) (v vHat : EuclideanSpace Real (Fin p))
+    (hv : ‖v‖ = 1) (hvHat : ‖vHat‖ = 1)
+    (hSv : Sigma v =
+      hSigma.eigenvalues
+        (show finrank Real (EuclideanSpace Real (Fin p)) = p by simp) ⟨j, hj⟩ • v)
+    (hShv : SigmaHat vHat =
+      hSigmaHat.eigenvalues
+        (show finrank Real (EuclideanSpace Real (Fin p)) = p by simp) ⟨j, hj⟩ • vHat)
+    (sinThetaNorm : Real)
+    (hsinThetaNorm : sinThetaNorm =
+      TauCeti.sinThetaFrobenius (Submodule.span Real {v}) (Submodule.span Real {vHat}))
+    (Delta : Real) (hDelta : 0 < Delta)
+    (hgap : SourcePopulationGap Sigma hSigma j j Delta) :
+    sinThetaNorm ≤ 2 * ‖SigmaHat - Sigma‖_op / Delta := by
+  subst hsinThetaNorm
+  exact DavisKahanTheory.yuWangSamworth_corollary1_sinTheta_le
+    (hA := hSigma) (hB := hSigmaHat)
+    (hn := show finrank Real (EuclideanSpace Real (Fin p)) = p by simp)
+    (j := ⟨j, hj⟩) hv hvHat hSv hShv hDelta
+    (hgap.toPopulationBoundaryGap.toOrderedBlockBoundaryGap)
+
+/-- **Yu--Wang--Samworth 2015, Corollary 1, second display.**
+
+Under the hypotheses of `corollary1_sinTheta` together with the printed
+orientation condition `vHat^T v >= 0`,
+
+`||vHat - v|| <= 2^(3/2) ||SigmaHat - Sigma||_op / Delta`. -/
+theorem corollary1_alignedVector
+    {p j : Nat}
+    (Sigma SigmaHat : EuclideanSpace Real (Fin p) →ₗ[Real] EuclideanSpace Real (Fin p))
+    (hSigma : Sigma.IsSymmetric) (hSigmaHat : SigmaHat.IsSymmetric)
+    (hj : j < p) (v vHat : EuclideanSpace Real (Fin p))
+    (hv : ‖v‖ = 1) (hvHat : ‖vHat‖ = 1)
+    (hSv : Sigma v =
+      hSigma.eigenvalues
+        (show finrank Real (EuclideanSpace Real (Fin p)) = p by simp) ⟨j, hj⟩ • v)
+    (hShv : SigmaHat vHat =
+      hSigmaHat.eigenvalues
+        (show finrank Real (EuclideanSpace Real (Fin p)) = p by simp) ⟨j, hj⟩ • vHat)
+    (hsign : 0 ≤ inner Real vHat v)
+    (Delta : Real) (hDelta : 0 < Delta)
+    (hgap : SourcePopulationGap Sigma hSigma j j Delta) :
+    ‖vHat - v‖ ≤ 2 * Real.sqrt 2 * ‖SigmaHat - Sigma‖_op / Delta :=
+  DavisKahanTheory.yuWangSamworth_corollary1_real_le
+    (hA := hSigma) (hB := hSigmaHat)
+    (hn := show finrank Real (EuclideanSpace Real (Fin p)) = p by simp)
+    (j := ⟨j, hj⟩) hv hvHat hSv hShv hsign hDelta
+    (hgap.toPopulationBoundaryGap.toOrderedBlockBoundaryGap)
+
+end PaperFacing
+
 end YuWangSamworth2015

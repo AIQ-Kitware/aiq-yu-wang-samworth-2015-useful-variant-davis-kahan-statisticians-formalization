@@ -191,6 +191,37 @@ theorem exists_unitary_sum_sq_norm_frameComp_sub_le {u v : Fin d → E}
   have h := sum_sq_norm_aligned_le_sinThetaSq hu hv
   rwa [sinThetaSq_eq_sinThetaFrobenius_sq_of_spans hu hv rfl rfl] at h
 
+/-- **Procrustes alignment from any Frobenius sine bound.**
+
+Given orthonormal frames `V`, `V̂` and *any* bound `C` on the Frobenius sine
+distance between their spans, there is a unitary `Ô` on the block's coordinate
+space with `‖V̂ Ô − V‖_F ≤ √2 · C`, where `V` is the supplied frame rather than
+some other frame of the same span.
+
+This is the alignment half of the paper's argument separated from the
+perturbation half: it knows nothing about eigenvectors, singular vectors, or
+gaps, so every theorem with a Frobenius sine bound gets its aligned-frame
+conclusion by supplying that bound here.  The symmetric and rectangular theorems
+both use it. -/
+theorem exists_unitary_sqrt_sum_sq_norm_frameComp_sub_le {u v : Fin d → E}
+    (hu : Orthonormal 𝕜 u) (hv : Orthonormal 𝕜 v) {C : ℝ}
+    (hsine : sinThetaFrobenius (Submodule.span 𝕜 (Set.range u))
+      (Submodule.span 𝕜 (Set.range v)) ≤ C) :
+    ∃ O : EuclideanSpace 𝕜 (Fin d) ≃ₗᵢ[𝕜] EuclideanSpace 𝕜 (Fin d),
+      (∀ x y, ⟪O x, O y⟫_𝕜 = ⟪x, y⟫_𝕜) ∧
+        Real.sqrt (∑ i, ‖frameComp hv O i - u i‖ ^ 2) ≤ Real.sqrt 2 * C := by
+  obtain ⟨O, hO, hsum⟩ := exists_unitary_sum_sq_norm_frameComp_sub_le hu hv
+  refine ⟨O, hO, ?_⟩
+  have hsnn : (0 : ℝ) ≤ sinThetaFrobenius (Submodule.span 𝕜 (Set.range u))
+      (Submodule.span 𝕜 (Set.range v)) := sinThetaFrobenius_nonneg _ _
+  calc Real.sqrt (∑ i, ‖frameComp hv O i - u i‖ ^ 2)
+      ≤ Real.sqrt (2 * sinThetaFrobenius (Submodule.span 𝕜 (Set.range u))
+          (Submodule.span 𝕜 (Set.range v)) ^ 2) := Real.sqrt_le_sqrt hsum
+    _ = Real.sqrt 2 * sinThetaFrobenius (Submodule.span 𝕜 (Set.range u))
+          (Submodule.span 𝕜 (Set.range v)) := by
+        rw [Real.sqrt_mul (by norm_num : (0 : ℝ) ≤ 2), Real.sqrt_sq hsnn]
+    _ ≤ Real.sqrt 2 * C := mul_le_mul_of_nonneg_left hsine (Real.sqrt_nonneg 2)
+
 /-- **Yu--Wang--Samworth Theorem 2, second conclusion, with an explicit `Ô`.**
 
 For arbitrary ordered eigenframes `V`, `V̂` at a common index block and a
@@ -344,6 +375,23 @@ theorem frameComp_eq_sum_frameAlignMatrix {v : Fin d → F} (hv : Orthonormal �
     (O : EuclideanSpace ℝ (Fin d) ≃ₗᵢ[ℝ] EuclideanSpace ℝ (Fin d)) (i : Fin d) :
     frameComp hv O i = ∑ j, frameAlignMatrix O j i • v j :=
   frameComp_apply hv O i
+
+/-- **Procrustes alignment from any Frobenius sine bound, over `ℝ` with `Ô ∈ O(d)`.**
+
+`exists_unitary_sqrt_sum_sq_norm_frameComp_sub_le` at `𝕜 = ℝ`, with the coordinate
+isometry replaced by its matrix and the columns of `V̂ Ô` written out as
+`(V̂ Ô)ᵢ = ∑ⱼ Ôⱼᵢ v̂ⱼ`. -/
+theorem exists_orthogonal_sqrt_sum_sq_norm_sub_le {u v : Fin d → F}
+    (hu : Orthonormal ℝ u) (hv : Orthonormal ℝ v) {C : ℝ}
+    (hsine : sinThetaFrobenius (Submodule.span ℝ (Set.range u))
+      (Submodule.span ℝ (Set.range v)) ≤ C) :
+    ∃ O : Matrix (Fin d) (Fin d) ℝ, O ∈ Matrix.orthogonalGroup (Fin d) ℝ ∧
+      Real.sqrt (∑ i, ‖(∑ j, O j i • v j) - u i‖ ^ 2) ≤ Real.sqrt 2 * C := by
+  obtain ⟨O, -, hbound⟩ := exists_unitary_sqrt_sum_sq_norm_frameComp_sub_le hu hv hsine
+  refine ⟨frameAlignMatrix O, frameAlignMatrix_mem_orthogonalGroup O, ?_⟩
+  have hcols : ∀ i, (∑ j, frameAlignMatrix O j i • v j) = frameComp hv O i :=
+    fun i => (frameComp_eq_sum_frameAlignMatrix hv O i).symm
+  simpa only [hcols] using hbound
 
 /-- **Yu--Wang--Samworth Theorem 2, second conclusion, over `ℝ` with `Ô ∈ O(d)`.**
 

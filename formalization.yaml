@@ -7,18 +7,22 @@
 # see README.md for what that means for updates.
 version: v0.4
 project:
-  name: 'Yu-Wang-Samworth 2015: the population-gap sin-Theta theorem'
-  description: 'A machine-checked proof of the first conclusion of Theorem 2 of Yu, Wang and
-    Samworth''s variant of the Davis-Kahan theorem: for a symmetric operator T on a finite-dimensional
-    real or complex inner product space, a symmetric perturbation S, and a set s of eigenvalue
-    indices whose selected eigenvalues are separated from the unselected ones by at least
-    Delta > 0, the Frobenius norm of sin Theta between the corresponding eigenspaces is at
-    most 2 |S - T|_F / Delta. The separation is taken entirely within the population spectrum
-    of T, which is what distinguishes this variant from the classical bound and what makes
-    it usable in statistics: the classical gap involves the unobserved sample eigenvalues.
-    The compared statement is one theorem; the repository carries the wider Yu-Wang-Samworth
-    development it is proved in, extracted from the authoritative repository named in the
-    README.'
+  name: 'Yu-Wang-Samworth 2015: the population-gap Davis-Kahan theorems'
+  description: 'A machine-checked formalization of every numbered result of Yu, Wang and
+    Samworth''s variant of the Davis-Kahan theorem for statisticians: Theorem 1, both conclusions
+    of Theorem 2, both displays of Corollary 1, Theorem 3 for right and left singular subspaces,
+    and Appendix Lemma A1. The paper''s contribution is that the eigenvalue separation in a
+    sin-Theta bound may be taken entirely inside the population spectrum, rather than between
+    the population eigenvalues and the unobserved sample ones; the classical separation can
+    vanish while the population spectrum is well separated, and the paper gives an explicit
+    five-by-five example where it does. No sample eigengap is assumed anywhere, so the sample
+    operator may have a repeated eigenvalue at the selected block and the theorems quantify
+    over every admissible orthonormal sample eigenframe rather than over one chosen eigenbasis;
+    a repository witness exhibits a sample operator for which every unit vector of the plane
+    is admissible. Two defects in the printed paper are machine-checked rather than concealed:
+    printed Equation (4) omits a square and is refuted as printed, and Theorem 3''s printed
+    convention sigma^2_{rank(A)+1} := -infinity is false at the rank boundary and is replaced
+    by the ambient-index convention the paper''s own proof uses.'
   authors:
   - Jon Crall
   - Edward Wang
@@ -44,27 +48,60 @@ sources:
   - Richard J. Samworth
   id: doi:10.1093/biomet/asv008
   type: article
-  location: Biometrika 102(2), 2015, 315-323, Theorem 2, first conclusion
+  location: Biometrika 102(2), 2015, 315-323
   relationship: formalizes
-  note: 'The compared theorem is the printed first conclusion of Theorem 2, with no added
-    hypothesis and no weakened conclusion. Two divergences elsewhere in the same paper are
-    recorded in the substantive repository and are not part of this entry: printed Equation
-    (4) does not stand as written and is corrected there, and the rank-boundary convention
-    required a correction.'
+  note: 'Published Biometrika numbering. Compared declarations and their exact source alignment
+    are listed under status.main_results below; the clause-by-clause basis is
+    palomar/YWS_SOURCE_CONTRACT.md. Theorem 2 and Corollary 1 are formalized and compared at
+    the printed statement with no added hypothesis and no weakened conclusion. Theorem 3 is
+    compared in a corrected form: its printed rank-boundary convention is false and is refuted
+    in this repository, and the statements use the ambient-index convention the paper''s proof
+    requires. Theorem 1 and Appendix Lemma A1 are formalized here but are not compared by any
+    Comparator entry.'
   author_endorsement: not-contacted
 status:
-  scope: 'Formalized and compared here: the first conclusion of Theorem 2, at the paper''s
-    scope -- finite dimension, an arbitrary index set rather than a leading block, and an
-    RCLike field so the real and complex cases are one theorem. Not compared here: the second
-    conclusion of Theorem 2, the aligned orthogonal frame with the printed 2^(3/2) constant,
-    which is formalized in the `YuWangSamworth2015` library included here; and the rest of that
-    paper. The source census that tracks that wider coverage stays in the authoritative
-    repository and is deliberately not duplicated here. `Challenge.lean` carries the deliberate
-    statement-side hole the Comparator convention requires, and no library declaration is left
-    incomplete.'
+  scope: 'Formalized in this repository: every numbered result of the paper -- Theorem 1, both
+    conclusions of Theorem 2, both displays of Corollary 1, Theorem 3 for right and left singular
+    subspaces with sine and aligned-frame conclusions, and Appendix Lemma A1 -- together with
+    the Section 1 numerical illustration, both Section 2 sharpness constructions, the deterministic
+    content of the Section 3 audit, and the two source-defect refutations. Compared by Comparator:
+    Theorem 2 and Corollary 1 (palomar/yws-symmetric, exact) and Theorem 3 (palomar/yws-rectangular,
+    source-corrected). Not compared: Theorem 1, Appendix Lemma A1, the sharpness material and
+    the refutations. Theorem 1 is withheld from comparison because writing its printed mixed
+    separation exactly turns on the paper''s endpoint conventions for the sample spectrum, which
+    as transcribed make the theorem vacuous at any block touching either end of the spectrum;
+    that question is recorded in palomar/YWS_SOURCE_CONTRACT.md and is unresolved. The Challenge
+    modules carry the deliberate statement-side holes the Comparator convention requires; no
+    library declaration is left incomplete. The source census and audit machinery are not
+    extracted here, so this repository makes no coverage claim beyond what is listed.'
   sorry_count: 0
   sorry_in_definitions: 0
   axioms: []
+  main_results:
+  - name: YWSPalomar.theorem2_sinTheta
+    statement: 'Theorem 2, first conclusion: the Frobenius sin-Theta distance between the population
+      and sample eigenspaces of a block is at most 2 min(sqrt d |E|_op, |E|_F) / Delta, where
+      Delta is the population boundary gap of the block. Exact.'
+  - name: YWSPalomar.theorem2_alignedFrame
+    statement: 'Theorem 2, second conclusion: some orthogonal d-by-d matrix O-hat satisfies
+      |V-hat O-hat - V|_F <= 2^(3/2) min(sqrt d |E|_op, |E|_F) / Delta, against the supplied
+      population frame. Exact.'
+  - name: YWSPalomar.corollary1_sinTheta
+    statement: 'Corollary 1, first display: the rank-one case, sin Theta(v-hat, v) <= 2 |E|_op
+      / Delta_j with Delta_j the neighbouring population gap. Exact.'
+  - name: YWSPalomar.corollary1_alignedVector
+    statement: 'Corollary 1, second display: under the printed orientation condition, |v-hat
+      - v| <= 2^(3/2) |E|_op / Delta_j. Exact.'
+  - name: YWSRectangular.theorem3_rightSinTheta
+    statement: 'Theorem 3, right singular subspaces, sine conclusion, with the rank-boundary
+      convention CORRECTED from sigma^2_{rank(A)+1} to the ambient singular-value sequence.
+      Not the literal printed statement, which is false; see the source note.'
+  - name: YWSRectangular.theorem3_rightAlignedFrame
+    statement: 'Theorem 3, right singular subspaces, aligned-frame conclusion, same correction.'
+  - name: YWSRectangular.theorem3_leftSinTheta
+    statement: 'Theorem 3, left singular subspaces, sine conclusion, same correction.'
+  - name: YWSRectangular.theorem3_leftAlignedFrame
+    statement: 'Theorem 3, left singular subspaces, aligned-frame conclusion, same correction.'
 automation:
   methods:
   - method: agent
@@ -77,46 +114,46 @@ automation:
     framework: Claude Code
     tool_setup: Agents worked directly in the repository with the Lean toolchain, running
       `lake build` and the repository's own gate suite. Model attribution is recorded per
-      commit in Co-Authored-By trailers and per declaration in module provenance headers,
-      and measured token usage is accounted in the checked-in ledger under `.llm_resource_tally/`.
+      commit in Co-Authored-By trailers and per declaration in module provenance headers.
     cost:
-      wall_time: not tracked as elapsed time; the ledger records 44657 assistant turns across
-        1591 accounted commits
+      wall_time: not tracked as elapsed time
       spend_usd: subscription-based; not tracked per commit
       hardware: API-only
     prompting_notes: 'Work was directed by task, not by prompt template: a scope decision
-      from the maintainer, then autonomous proof and audit work against the source censuses.
-      Adversarial review prompts are checked in under `dev/` and are part of the audit record.'
+      from the maintainer, then autonomous proof and audit work against the source census.
+      Adversarial review prompts are part of the audit record in the authoritative repository.'
   - method: manual
     framework: n/a
     tool_setup: The human maintainer set scope and priorities, ran builds and audits, inspected
-      theorem interfaces, coordinated subject-matter discussion with the applied-paper authors,
-      adjudicated source-fidelity questions, accepted or rejected proposed repairs, and decided
-      repository policy.
+      theorem interfaces, adjudicated source-fidelity questions, accepted or rejected proposed
+      repairs, and decided repository policy.
   spend_usd: subscription-based; not tracked
   notes: This is a heavily agent-authored formalization with human direction and review. The
-    Lean kernel is the proof checker; the repository's mechanical gates additionally audit
-    dependency layering, axiom closure, census consistency and comparator statement equality.
-    Those checks do not establish that a Lean statement says what a paper says, which is why
-    every source paper carries a separate clause-by-clause semantic review.
+    Lean kernel is the proof checker. Mechanical checks do not establish that a Lean statement
+    says what a paper says, which is why the selection here rests on a clause-by-clause source
+    contract rather than on declaration names.
 fidelity:
-  divergences: 'None for the compared theorem: it is the printed statement. Divergences elsewhere
-    in the source paper are recorded in the substantive repository and are listed in the source
-    note above.'
+  divergences: 'Two defects in the printed paper, both machine-checked rather than concealed.
+    (1) Printed Equation (4): the rewrite of sin^2(2 theta) in terms of |v-hat - v|^2 omits a
+    square on the factor (2 - |v-hat - v|^2). The corrected identity is proved and the printed
+    polynomial is refuted at inner product 3/5. Not part of any compared entry. (2) Theorem 3''s
+    printed convention sigma^2_{rank(A)+1} := -infinity makes the denominator infinite when the
+    block ends at rank(A), so the printed bound asserts that two singular subspaces which can be
+    orthogonal coincide; refuted by two rank-one orthogonal projections of the plane, for which
+    the sin-Theta Frobenius norm is 1. The compared Theorem 3 statements use the ambient-index
+    convention the paper''s own proof uses, with singular values zero past the rank. The
+    yws-rectangular entry is therefore source-corrected, not exact. Beyond these, the compared
+    Theorem 2 and Corollary 1 statements are the printed ones, with no added hypothesis and no
+    weakened conclusion; in particular no sample eigengap is introduced and the sample eigenframe
+    is an arbitrary admissible one.'
 review:
   status: self-assessed
   reviewers:
   - Jon Crall
-  notes: 'No external peer review. What has happened, and should be read as exactly that:
-    kernel verification of every claimed declaration by `lake build`; repository gates auditing
-    dependency layers, axiom closure, docstring coverage, comparator statement equality and
-    census consistency; repeated adversarial source audits in which an independent agent was
-    asked to find a discrepancy between a printed statement and its Lean rendering, several
-    of which found real defects that are recorded in the censuses; and human coordinator review
-    of scope, theorem interfaces and repair decisions.
-
-    For Davis–Kahan 1970, `python3 scripts/certify_davis_kahan_1970.py --clean` generates
-    a self-contained compiler-evidence bundle and source-order audit packet. That certificate
-    proves elaboration and declaration resolution. It does not prove source equivalence, and
-    the completion standard is deliberately three independent axes: source-facing implementation,
-    compiler verification, and hostile semantic acceptance.'
+  notes: 'No external peer review. What has happened: kernel verification of every claimed
+    declaration by `lake build`; Comparator, the independent NanoDa kernel and Lean''s own kernel
+    accepting both entries, with axiom closure exactly propext, Quot.sound and Classical.choice;
+    repeated adversarial source audits in the authoritative repository, several of which found
+    real defects that are recorded in its census -- including, in the pass that produced these
+    entries, that Theorem 3''s aligned-frame conclusion was not stated in the shape the paper
+    prints; and human coordinator review of scope, theorem interfaces and repair decisions.'

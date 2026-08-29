@@ -1,0 +1,22 @@
+{
+  "challenge_module": "Palomar.YWSRectangular.Challenge",
+  "solution_module": "Palomar.YWSRectangular.Solution",
+  "theorem_names": [
+    "YWSRectangular.theorem3_rightSinTheta",
+    "YWSRectangular.theorem3_rightAlignedFrame",
+    "YWSRectangular.theorem3_leftSinTheta",
+    "YWSRectangular.theorem3_leftAlignedFrame"
+  ],
+  "definition_names": [
+    "YWSRectangular.Rn",
+    "YWSRectangular.IsRightSingularBlock",
+    "YWSRectangular.IsLeftSingularBlock",
+    "YWSRectangular.SingularBoundaryGap",
+    "YWSRectangular.frobeniusNorm",
+    "YWSRectangular.opNorm",
+    "YWSRectangular.sinThetaDist",
+    "YWSRectangular.coefficient"
+  ],
+  "permitted_axioms": ["propext", "Quot.sound", "Classical.choice"],
+  "enable_nanoda": true
+}

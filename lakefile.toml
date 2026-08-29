@@ -1,9 +1,9 @@
 name = "yws_2015_formalization"
 version = "0.1.0"
-# The Palomar entry is what this repository exists to present, so it is the only
-# default target. The extracted libraries build on demand: `lake build ForTauCeti`,
-# `lake build DavisKahan`, `lake build YuWangSamworth2015`.
-defaultTargets = ["Solution"]
+# The default build is the mathematics. The Palomar entries are built explicitly
+# with `lake build Palomar`, because their Challenge modules carry the deliberate
+# statement-side holes the Comparator convention requires.
+defaultTargets = ["YuWangSamworth2015"]
 
 [leanOptions]
 pp.unicode.fun = true
@@ -44,11 +44,10 @@ srcDir = "YuWangSamworth2015"
 globs = ["YuWangSamworth2015.*"]
 leanOptions = { warningAsError = true, weak.linter.mathlibStandardSet = true, weak.linter.style.longFile = 1500, weak.linter.style.longFileDefValue = 1500, weak.linter.style.header = false }
 
-# The Palomar entry. `Challenge` states the theorem against Mathlib alone and
-# contains a deliberate statement-side hole; `Solution` supplies the same
-# declaration from the libraries above. Comparator checks that the two agree.
+# The Palomar entries. Each `Challenge` states its theorems against Mathlib alone
+# and contains deliberate statement-side holes; each `Solution` supplies the same
+# declarations from the libraries above. Comparator checks that the two agree.
+# Intentionally not a default target: the Challenge modules contain holes.
 [[lean_lib]]
-name = "Challenge"
-
-[[lean_lib]]
-name = "Solution"
+name = "Palomar"
+globs = ["Palomar.*"]

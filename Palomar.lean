@@ -1,0 +1,12 @@
+-- Root of the Palomar Registry submission surface.
+--
+-- Intentionally empty, and it must stay that way. Each entry under `Palomar/`
+-- consists of a `Challenge` module, which states a theorem with a deliberate
+-- statement-side hole, and a `Solution` module, which supplies the same
+-- declaration name from the ordinary development. Importing both into one
+-- aggregate would put two declarations with the same name in one environment.
+--
+-- The lakefile's `globs = ["Palomar.*"]` is authoritative for what gets built, so
+-- every module compiles without anything importing it here.
+--
+-- See palomar/README.md and dev/palomar-readiness.md.
