@@ -1,0 +1,120 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/mathlib-initiative/formalization.yaml/main/schema/formalization.schema.json
+#
+# Thin-wrapper metadata for the Yu-Wang-Samworth Palomar entry.
+#
+# Before submitting, replace 09cdd30aeec523533abffc6d553196912c6be6ec in BOTH this file and
+# lakefile.toml with the same full 40-character lowercase commit of the
+# substantive repository that the entry was verified against.
+version: v0.4
+project:
+  name: 'Yu-Wang-Samworth 2015: the population-gap sin-Theta theorem'
+  description: 'A machine-checked proof of the first conclusion of Theorem 2 of Yu, Wang and
+    Samworth''s variant of the Davis-Kahan theorem: for a symmetric operator T on a finite-dimensional
+    real or complex inner product space, a symmetric perturbation S, and a set s of eigenvalue
+    indices whose selected eigenvalues are separated from the unselected ones by at least
+    Delta > 0, the Frobenius norm of sin Theta between the corresponding eigenspaces is at
+    most 2 |S - T|_F / Delta. The separation is taken entirely within the population spectrum
+    of T, which is what distinguishes this variant from the classical bound and what makes
+    it usable in statistics: the classical gap involves the unobserved sample eigenvalues.
+    This repository is a thin Comparator wrapper; the proof lives in the substantive formalization
+    pinned below.'
+  authors:
+  - Jon Crall
+  - Edward Wang
+  license: Apache-2.0
+  responsible_maintainers:
+  - Jon Crall
+repository:
+  substantive_formalization:
+    id: AIQ-Kitware/aiq-dkps-formalization
+    revision: 09cdd30aeec523533abffc6d553196912c6be6ec
+classification:
+  arxiv:
+  - math.ST
+  - math.FA
+  msc2020:
+  - 62H25
+  - 47A55
+  - 15A42
+  - 65F15
+sources:
+- title: A useful variant of the Davis-Kahan theorem for statisticians
+  authors:
+  - Yi Yu
+  - Tengyao Wang
+  - Richard J. Samworth
+  id: doi:10.1093/biomet/asv008
+  type: article
+  location: Biometrika 102(2), 2015, 315-323, Theorem 2, first conclusion
+  relationship: formalizes
+  note: 'The compared theorem is the printed first conclusion of Theorem 2, with no added
+    hypothesis and no weakened conclusion. Two divergences elsewhere in the same paper are
+    recorded in the substantive repository and are not part of this entry: printed Equation
+    (4) does not stand as written and is corrected there, and the rank-boundary convention
+    required a correction.'
+  author_endorsement: not-contacted
+status:
+  scope: 'Formalized and compared here: the first conclusion of Theorem 2, at the paper''s
+    scope -- finite dimension, an arbitrary index set rather than a leading block, and an
+    RCLike field so the real and complex cases are one theorem. Not compared here: the second
+    conclusion of Theorem 2, the aligned orthogonal frame with the printed 2^(3/2) constant,
+    which is formalized in the substantive repository; and the rest of that paper, which has
+    its own maintained census there.'
+  sorry_count: 0
+  sorry_in_definitions: 0
+  axioms: []
+automation:
+  methods:
+  - method: agent
+    models:
+    - claude-opus-5
+    - claude-opus-4-8
+    - claude-fable-5
+    - gpt-5.6-terra
+    - gpt-5.6-sol
+    framework: Claude Code
+    tool_setup: Agents worked directly in the repository with the Lean toolchain, running
+      `lake build` and the repository's own gate suite. Model attribution is recorded per
+      commit in Co-Authored-By trailers and per declaration in module provenance headers,
+      and measured token usage is accounted in the checked-in ledger under `.llm_resource_tally/`.
+    cost:
+      wall_time: not tracked as elapsed time; the ledger records 44657 assistant turns across
+        1591 accounted commits
+      spend_usd: subscription-based; not tracked per commit
+      hardware: API-only
+    prompting_notes: 'Work was directed by task, not by prompt template: a scope decision
+      from the maintainer, then autonomous proof and audit work against the source censuses.
+      Adversarial review prompts are checked in under `dev/` and are part of the audit record.'
+  - method: manual
+    framework: n/a
+    tool_setup: The human maintainer set scope and priorities, ran builds and audits, inspected
+      theorem interfaces, coordinated subject-matter discussion with the applied-paper authors,
+      adjudicated source-fidelity questions, accepted or rejected proposed repairs, and decided
+      repository policy.
+  spend_usd: subscription-based; not tracked
+  notes: This is a heavily agent-authored formalization with human direction and review. The
+    Lean kernel is the proof checker; the repository's mechanical gates additionally audit
+    dependency layering, axiom closure, census consistency and comparator statement equality.
+    Those checks do not establish that a Lean statement says what a paper says, which is why
+    every source paper carries a separate clause-by-clause semantic review.
+fidelity:
+  divergences: 'None for the compared theorem: it is the printed statement. Divergences elsewhere
+    in the source paper are recorded in the substantive repository and are listed in the source
+    note above.'
+review:
+  status: self-assessed
+  reviewers:
+  - Jon Crall
+  notes: 'No external peer review. What has happened, and should be read as exactly that:
+    kernel verification of every claimed declaration by `lake build`; repository gates auditing
+    dependency layers, axiom closure, docstring coverage, comparator statement equality and
+    census consistency; repeated adversarial source audits in which an independent agent was
+    asked to find a discrepancy between a printed statement and its Lean rendering, several
+    of which found real defects that are recorded in the censuses; and human coordinator review
+    of scope, theorem interfaces and repair decisions.
+
+    For Davis–Kahan 1970, `python3 scripts/certify_davis_kahan_1970.py --clean` generates
+    a self-contained compiler-evidence bundle and source-order audit packet. That certificate
+    proves elaboration and declaration resolution. It does not prove source equivalence, and
+    the completion standard is deliberately three independent axes: source-facing implementation,
+    compiler verification, and hostile semantic acceptance.'
