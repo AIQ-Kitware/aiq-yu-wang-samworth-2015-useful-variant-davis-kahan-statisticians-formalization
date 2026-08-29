@@ -41,16 +41,50 @@ repository's census and are **not** part of this entry: printed Equation (4) doe
 not stand as written and is corrected there, and the paper's rank-boundary
 convention required a correction. The second conclusion of Theorem 2 — existence
 of an aligned orthogonal frame with the printed `2^{3/2}` constant — is formalized
-in the substantive repository but is not compared here.
+in the `YuWangSamworth2015` library included here, but is not compared here.
 
-## Structure
+## Where this comes from
 
-`Challenge.lean` states the theorem against Mathlib alone, with a deliberate
-statement-side hole. `Solution.lean` supplies the same declaration from the
-substantive development, which is pinned as a Lake dependency. Comparator checks
-that the two agree and that the proof uses only `propext`, `Quot.sound` and
-`Classical.choice`.
+This repository is an **extraction**, not a fork with a life of its own.
+[`AIQ-Kitware/aiq-dkps-formalization`](https://github.com/AIQ-Kitware/aiq-dkps-formalization)
+is authoritative: mathematics is developed, reviewed and audited there, and this
+repository is a snapshot of the `ForTauCeti`, `DavisKahan` and `YuWangSamworth2015` packages taken from it, without the surrounding history and
+without the packages that are not needed here. It exists so the entry can be read,
+built and checked on its own, and so a reader is not asked to clone a much larger
+multi-paper development to see one theorem's proof.
 
-The proof itself lives in the substantive repository, not here: it reduces the
-Frobenius `sin Θ` overlap to a Sylvester-type separation estimate, and copying it
-into a wrapper would create a second version to keep in step with the first.
+The practical consequence: **send changes upstream.** A fix made here and not made
+there is lost at the next extraction. When the upstream packages move, this snapshot
+is refreshed from them.
+
+What is deliberately *not* extracted: the source census and the audit and gate scripts,
+which are maintenance machinery for the authoritative repository. Accordingly this
+repository makes no coverage claim about the paper as a whole.
+
+The `DavisKahan` library is present because the Yu-Wang-Samworth package uses its
+Hilbert-Schmidt/Frobenius ideal theory; it is a dependency here, not the subject.
+
+The extraction is a copy of the package directories, so every module keeps its
+upstream path, namespace and provenance header. The libraries build against a pinned
+Mathlib and a pinned Tau Ceti, recorded in `lakefile.toml` and `lake-manifest.json`.
+
+## Layout
+
+```
+Challenge.lean      the Palomar statement, against Mathlib alone, with a
+                    deliberate statement-side hole
+Solution.lean       the same declaration, supplied from the libraries below
+comparator.json     what Comparator compares, and the permitted axioms
+formalization.yaml  registry metadata
+ForTauCeti/         reusable mathematics, in its final `TauCeti.*` namespaces
+DavisKahan/         Davis--Kahan development, used here for its ideal theory
+YuWangSamworth2015/ the Yu--Wang--Samworth development
+```
+
+`lake build` builds the entry. `lake build ForTauCeti`, `lake build DavisKahan` and `lake build YuWangSamworth2015` build the libraries.
+
+## Status
+
+Preparation. Nothing here claims registration, acceptance, or peer review by the
+Palomar Registry.
+

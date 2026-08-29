@@ -1,10 +1,10 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/mathlib-initiative/formalization.yaml/main/schema/formalization.schema.json
 #
-# Thin-wrapper metadata for the Yu-Wang-Samworth Palomar entry.
+# Metadata for the Yu-Wang-Samworth 2015 extraction.
 #
-# Before submitting, replace 09cdd30aeec523533abffc6d553196912c6be6ec in BOTH this file and
-# lakefile.toml with the same full 40-character lowercase commit of the
-# substantive repository that the entry was verified against.
+# This repository carries the proof. It is an extraction of the corresponding
+# packages from AIQ-Kitware/aiq-dkps-formalization, which remains authoritative;
+# see README.md for what that means for updates.
 version: v0.4
 project:
   name: 'Yu-Wang-Samworth 2015: the population-gap sin-Theta theorem'
@@ -16,8 +16,9 @@ project:
     most 2 |S - T|_F / Delta. The separation is taken entirely within the population spectrum
     of T, which is what distinguishes this variant from the classical bound and what makes
     it usable in statistics: the classical gap involves the unobserved sample eigenvalues.
-    This repository is a thin Comparator wrapper; the proof lives in the substantive formalization
-    pinned below.'
+    The compared statement is one theorem; the repository carries the wider Yu-Wang-Samworth
+    development it is proved in, extracted from the authoritative repository named in the
+    README.'
   authors:
   - Jon Crall
   - Edward Wang
@@ -25,9 +26,7 @@ project:
   responsible_maintainers:
   - Jon Crall
 repository:
-  substantive_formalization:
-    id: AIQ-Kitware/aiq-dkps-formalization
-    revision: 09cdd30aeec523533abffc6d553196912c6be6ec
+  role: substantive-development
 classification:
   arxiv:
   - math.ST
@@ -58,8 +57,11 @@ status:
     scope -- finite dimension, an arbitrary index set rather than a leading block, and an
     RCLike field so the real and complex cases are one theorem. Not compared here: the second
     conclusion of Theorem 2, the aligned orthogonal frame with the printed 2^(3/2) constant,
-    which is formalized in the substantive repository; and the rest of that paper, which has
-    its own maintained census there.'
+    which is formalized in the `YuWangSamworth2015` library included here; and the rest of that
+    paper. The source census that tracks that wider coverage stays in the authoritative
+    repository and is deliberately not duplicated here. `Challenge.lean` carries the deliberate
+    statement-side hole the Comparator convention requires, and no library declaration is left
+    incomplete.'
   sorry_count: 0
   sorry_in_definitions: 0
   axioms: []
