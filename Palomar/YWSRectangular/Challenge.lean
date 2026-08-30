@@ -45,9 +45,11 @@ The defect is a mis-stated index and the paper's own proof shows the intended
 one: that proof passes to `AᵀA`, with eigenvalues `σ²₁ ≥ ⋯ ≥ σ²_q` at the
 **ambient** dimension `q`, and applies Theorem 2, whose convention is
 `λ_{q+1} := −∞`. So the corrected conventions are `σ²₀ := +∞`, `σ²_{q+1} := −∞`
-and `σ_j := 0` for `rank(A) ≤ j < q` on the right, and `σ²_{p+1} := −∞` on the
-left. That is the reading proved here, and `σ²_{rank(A)+1} := −∞` is not
-reintroduced anywhere below.
+and `σ_j := 0` for `rank(A) < j ≤ q` on the right, and `σ²_{p+1} := −∞` on the
+left — indices one-based here, as in the paper; the Lean statements below are
+zero-based, where the same fact is `A.singularValues j = 0` exactly when
+`finrank ℝ (range A) ≤ j`. That is the reading proved here, and
+`σ²_{rank(A)+1} := −∞` is not reintroduced anywhere below.
 
 **The paper's own block restriction `s ≤ rank(A)` is kept.** It is a separate
 matter from the endpoint convention, and dropping it would be a different — if
@@ -65,9 +67,12 @@ case the source rank condition forces `A` to have full column rank on the right 
 full row rank on the left — and the selected frame to span everything, so the
 sine distance is identically zero and the bound holds for every positive `Δ`.
 
-The other known defect in this paper, the missing square in printed Equation (4),
-is formalized and refuted in the accompanying development and is not part of this
-entry.
+Other documented defects in this paper are formalized and refuted in the
+accompanying development and are not part of this entry: printed Equation (4)
+omits a square on `(2 − ‖v̂ − v‖²)`; the standalone printed Corollary 1 omits the
+unit normalization its own `d = 1` reading supplies, without which its second
+display is false; and Theorem 1's printed sample endpoint conventions are
+inverted, which makes it vacuous at any block touching an end of the spectrum.
 
 ## Note on the proofs
 

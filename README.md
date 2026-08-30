@@ -138,8 +138,9 @@ ray the whole line at `r = 1` or `s = p`, so `δ = 0` and the hypothesis `δ > 0
 unsatisfiable at any block touching an end of the spectrum — including the top-`d`
 block, the common case in statistics. The intended reading is the opposite one,
 `λ̂₀ = +∞` and `λ̂_{p+1} = −∞`, which makes the missing ray empty, exactly as
-Theorem 2's population conventions do. This is milder than the other two: it
-degrades a baseline theorem to vacuity rather than asserting something false. The
+Theorem 2's population conventions do. This one is milder in kind than the
+others: it degrades a baseline theorem to vacuity rather than asserting something
+false. The
 Lean statement is unaffected — it phrases the separation as an intrinsic spectral
 condition and never used the printed conventions — and no declaration here claims
 to be the printed `δ`.

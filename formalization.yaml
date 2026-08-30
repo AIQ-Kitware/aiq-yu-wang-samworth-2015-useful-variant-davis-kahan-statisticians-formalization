@@ -220,10 +220,12 @@ automation:
     tool_setup: >-
       Agents worked directly in the repository with the Lean toolchain, running
       `lake build` and the repository's own gate suite. Model attribution is
-      recorded per commit in Co-Authored-By trailers and per declaration in
-      module provenance headers. The authoritative repository's checked-in
-      resource ledger attributes 42178 assistant turns over 1721 accounted
-      sessions to this framework.
+      recorded per commit in Co-Authored-By trailers and per declaration in the
+      Mathlib-style `Authors:` module headers, which are a provenance record
+      naming models alongside the humans who directed the work and are not a claim
+      of authorship in the `project.authors` sense. The authoritative repository
+      also carries a measured token/turn ledger under `.llm_resource_tally/`; it
+      is not extracted here, and no quantity from it is restated in this file.
   - method: agent
     models:
     - gpt-5.6-terra
@@ -231,10 +233,9 @@ automation:
     framework: OpenAI Codex CLI
     tool_setup: >-
       A smaller share of the work was done by GPT-based agents under the OpenAI
-      Codex CLI rather than under Claude Code; the ledger distinguishes the two
-      backends and attributes 3604 assistant turns over 123 accounted sessions to
-      this one. Recorded separately rather than folded into the Claude Code
-      record, which would have been inaccurate.
+      Codex CLI rather than under Claude Code. Recorded separately rather than
+      folded into the Claude Code record, which would have been inaccurate; the
+      authoritative repository's ledger distinguishes the two backends by name.
   - method: manual
     framework: n/a
     tool_setup: >-

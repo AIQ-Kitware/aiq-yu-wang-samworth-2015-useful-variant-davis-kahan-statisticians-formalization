@@ -94,10 +94,12 @@ from), Theorem 3 (the rectangular singular-subspace extension) and Appendix Lemm
 A1; those are formalized in the accompanying development and are not compared
 here.
 
-Two divergences elsewhere in the paper are recorded in the substantive
-development and are not part of this entry: printed Equation (4) omits a square
-and is refuted as printed, and Theorem 3's printed rank-boundary convention
-`σ²_{rank(A)+1} := −∞` is false and is corrected there.
+Divergences elsewhere in the paper are recorded in the substantive development
+and are not part of this entry: printed Equation (4) omits a square and is
+refuted as printed; Theorem 3's printed rank-boundary convention
+`σ²_{rank(A)+1} := −∞` is false and is corrected there; and Theorem 1's printed
+sample endpoint conventions `λ̂₀ = −∞`, `λ̂_{p+1} = +∞` invert its exterior rays,
+which makes it vacuous at any block touching an end of the spectrum.
 
 ## Note on the proofs
 
@@ -196,7 +198,8 @@ noncomputable abbrev perturbation {p : ℕ} (d : ℕ) (E : Rp p →ₗ[ℝ] Rp p
 /-- **Theorem 2, first conclusion.**
 
 `‖sin Θ(V̂, V)‖_F ≤ 2 min(√d ‖E‖_op, ‖E‖_F) / Δ`, with `Δ` the population
-boundary gap of the block and no hypothesis whatever on the spectrum of `Σ̂`. -/
+boundary gap of the block and no gap or separation hypothesis on the
+spectrum of `Σ̂`. -/
 theorem theorem2_sinTheta {p d r s : ℕ}
     (Sigma SigmaHat : Rp p →ₗ[ℝ] Rp p)
     (hSigma : Sigma.IsSymmetric) (hSigmaHat : SigmaHat.IsSymmetric)

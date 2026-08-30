@@ -172,9 +172,11 @@ automation:
         name the models that produced a file alongside the humans who directed it.
         They are deliberately not a claim of authorship in the `project.authors`
         sense: this metadata is the authorship record, models appear here under
-        automation, and only people appear under `project.authors`. The checked-in
-        resource ledger attributes 42178 assistant turns over 1721 accounted
-        sessions to this framework.
+        automation, and only people appear under `project.authors`. The
+        authoritative repository also carries a measured token/turn ledger under
+        `.llm_resource_tally/`, which is not extracted here; no quantity from it
+        is restated in this file, because a number no reader of this repository can
+        check is worse than no number.
     - method: "agent"
       models:
         - "gpt-5.6-terra"
@@ -182,9 +184,9 @@ automation:
       framework: "OpenAI Codex CLI"
       tool_setup: >-
         A smaller share of the work was done by GPT-based agents under the OpenAI
-        Codex CLI rather than under Claude Code; the checked-in resource ledger
-        distinguishes the two backends and attributes 3604 assistant turns over
-        123 accounted sessions to this one.
+        Codex CLI rather than under Claude Code. The authoritative repository's
+        ledger distinguishes the two backends by name; the split is recorded there
+        and is not restated as a figure here.
     - method: "manual"
       framework: "n/a"
       tool_setup: >-

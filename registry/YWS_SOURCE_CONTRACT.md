@@ -15,10 +15,17 @@ correspondence is Corollary 1 = Corollary 3, Theorem 3 = Theorem 4,
 Lemma A1 = Lemma 5.
 
 **Sources used.** The published Biometrika article (doi:10.1093/biomet/asv008),
-read directly for this pass on 2026-08-29;
-`prose/distilled_literature/YuWangSamworth2015_statistical_davis_kahan.tex`, the
-repository's transformative reconstruction; and
-`dev/yu-wang-samworth-2015-full-source-census.json`.
+read directly for this pass on 2026-08-29; the repository's transformative
+reconstruction `prose/distilled_literature/YuWangSamworth2015_statistical_davis_kahan.tex`;
+and the source census `dev/yu-wang-samworth-2015-full-source-census.json`.
+
+**Where that evidence lives.** The last two paths, and the resource ledger and
+git history cited under authorship below, are in the **authoritative repository
+`AIQ-Kitware/aiq-dkps-formalization`, at commit `059bd034ef15be08c45d9d4150c7898fb1c66464` or later**. They are
+deliberately not extracted into the submission repository -- they are maintenance
+machinery for the authoritative one, and a second copy would be a second thing to
+keep honest. So a relative path in this file names a file in that repository, not
+in the submission repository, wherever this document is read.
 
 **Ordering convention throughout:** eigenvalues and singular values decreasing,
 `λ₁ ≥ … ≥ λ_p`, paper block `1 ≤ r ≤ s ≤ p`, `d = s − r + 1`, `E := Σ̂ − Σ`,
@@ -260,13 +267,12 @@ paper-facing `theorem1_uiNorm` on `EuclideanSpace ℝ (Fin p)` modelled on
 `theorem2_sinTheta`, plus a Challenge-side unitarily-invariant-norm interface —
 but neither is done.
 
-**HUMAN REVIEW ITEM.** The finding above is recorded here and in the two entry
-metadata files' scope fields. It is *not* yet recorded as a gap row in
-`dev/yu-wang-samworth-2015-full-source-census.json`, whose
-`published_source_audit` currently notes only that the published article fixes
-the preprint's wrong *indices* `λ̂_{s−1}`/`λ̂_{r+1}`, without observing that the
-*values* it assigns to `λ̂₀` and `λ̂_{p+1}` are inverted. Adding that row is
-census maintenance and belongs with a maintainer's review of this pass.
+**Recorded.** The finding is in the two entry metadata files' scope fields, and
+in the authoritative repository's census as gap
+`theorem1-sample-endpoint-conventions`, linked from rows `YWS-T1-baseline` and
+`YWS-T1-eq1`; that census's `published_source_audit` now also notes that the
+*values* the article assigns to `λ̂₀` and `λ̂_{p+1}` are inverted, not only that it
+fixes the preprint's wrong *indices* `λ̂_{s−1}`/`λ̂_{r+1}`.
 
 ---
 
@@ -323,10 +329,11 @@ removed, Comparator requires the Challenge and Solution copies of `sinThetaDist`
 
 Palomar publishes `project.authors`, so it was verified rather than inherited.
 `Jon Crall` and `Edward Wang` are the two names, and both are supported by
-repository evidence: `git log` in the authoritative repository attributes 1943
-commits to `edward.wang@kitware.com` against 2908 to `jon.crall@kitware.com`
-(plus 56 to a second address of Jon's), and commit `33f0c18b` — the maintainer's
-own `formalization.yaml` v0.4 migration — records the decision in terms:
+evidence in the authoritative repository named above — not in this one, whose
+history begins at the extraction. There, `git log` attributes 1943 commits to
+`edward.wang@kitware.com` against 2908 to `jon.crall@kitware.com` (plus 56 to a
+second address of Jon's), and commit `33f0c18b` — the maintainer's own
+`formalization.yaml` v0.4 migration — records the decision in terms:
 *"Authors are Jon Crall and Edward Wang, maintainer Jon Crall, per the
 maintainer. AI models are disclosed under automation, never as authors."* That is
 a maintainer adjudication supported by contribution evidence, not an inference

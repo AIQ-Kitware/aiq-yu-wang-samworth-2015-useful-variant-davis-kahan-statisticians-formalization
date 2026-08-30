@@ -6,7 +6,8 @@ equations (1)–(4), appendix equations (A1)–(A8).  The 2014 arXiv preprint sh
 one counter and numbers the last three Corollary 3, Theorem 4 and Lemma 5, which
 is what many Lean declaration names in this library still spell.  The census
 records the translation table under gap `preprint-numbering-aliases`; the names
-are not being changed because `comparator/*.json` pins some of them.
+are not being changed because Comparator configurations pin some of them as plain
+strings.
 
 ## Numbered paper results
 
@@ -75,8 +76,9 @@ only the population spectrum, so `λ̂_s = λ̂_{s+1}` remains admissible.
 
 ## Source defects recorded
 
-Two printed statements in this paper are false as printed, and both are machine
-checked in both directions.
+Three printed statements in this paper are false as printed, and all three are
+machine checked in both directions.  A fourth passage is not false but vacuous
+as printed.
 
 1. **Equation (4).** The printed right-hand side omits a square on
    `2 − ‖v̂ − v‖²`.  Corrected identity and counterexample in
@@ -87,8 +89,20 @@ checked in both directions.
    singular subspaces coincide — and they can be orthogonal.  Refuted in
    `Rectangular/RankBoundary.lean`.  The repair is the convention the paper's
    own proof uses: `σ²_{q+1} := −∞` at the **ambient** dimension, with
-   `σ_j := 0` for `min(p,q) < j`.  That is exactly the intrinsic gap of `A⋆A`
+   `σ_j := 0` past the rank — `A.singularValues j = 0` exactly when
+   `finrank 𝕜 (range A) ≤ j`.  That is exactly the intrinsic gap of `A⋆A`
    that this library's theorems carry, so no new theorem was needed.
+3. **The standalone printed Corollary 1** omits `‖v‖ = ‖v̂‖ = 1`, which it
+   inherits from its derivation as the `d = 1` case of Theorem 2.  Its second
+   display is false without it: scaling `v̂` preserves every printed hypothesis
+   while `‖v̂ − v‖` does not.  Refuted by
+   `corollary1_printed_unnormalized_counterexample` in `Symmetric/Corollary1.lean`.
+
+Separately, **Theorem 1's printed sample endpoint conventions** `λ̂₀ = −∞` and
+`λ̂_{p+1} = +∞` invert its exterior rays, so `δ = 0` and the hypothesis `δ > 0`
+is unsatisfiable at any block with `r = 1` or `s = p`.  That makes the printed
+theorem vacuous rather than false, and the Lean statements never used the printed
+conventions.  Census gap `theorem1-sample-endpoint-conventions`.
 
 ## Remaining non-numbered source-fidelity work
 

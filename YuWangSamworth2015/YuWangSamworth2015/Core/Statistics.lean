@@ -788,7 +788,7 @@ theorem yuWangSamworth_eigenvector_le
     (min_le_left _ _).trans_eq (by rw [Nat.cast_one, Real.sqrt_one, one_mul])
   gcongr
 
-/-! ### Corollary 1: the single-eigenvector case at the printed generality
+/-! ### Corollary 1: the single-eigenvector case, source-faithful at `d = 1`
 
 Yu, Wang and Samworth state the `d = 1` case separately because it is the one
 most applications need.  Their printed hypotheses are `Σ v = λⱼ v` and
@@ -815,10 +815,12 @@ private theorem span_range_const (u : E) :
     Submodule.span 𝕜 (Set.range fun _ : Fin 1 => u) = Submodule.span 𝕜 {u} := by
   rw [Set.range_const]
 
-/-- **Corollary 1, first display, at the printed generality.**
+/-- **Corollary 1, first display, the source-faithful `d = 1` specialization.**
 `sin Θ(v̂, v) ≤ 2 ‖Σ̂ − Σ‖_op / Δⱼ` for *arbitrary* unit eigenvectors `v`, `v̂`
 belonging to the `j`-th population and sample eigenvalues, with only the
-population separation `Δⱼ = min(λ_{j-1} − λⱼ, λⱼ − λ_{j+1})`. -/
+population separation `Δⱼ = min(λ_{j-1} − λⱼ, λⱼ − λ_{j+1})`.  The unit
+normalization is inherited from the corollary's derivation as the `d = 1` case of
+Theorem 2; the standalone printed display omits it. -/
 theorem yuWangSamworth_eigenvector_frame_sinTheta_le
     {A B : E →ₗ[𝕜] E} {hA : A.IsSymmetric} {hB : B.IsSymmetric}
     {n : ℕ} {hn : finrank 𝕜 E = n} {j : Fin n} {u v : E}
@@ -850,8 +852,8 @@ theorem yuWangSamworth_eigenvector_frame_sinTheta_le
     (min_le_left _ _).trans_eq (by rw [Nat.cast_one, Real.sqrt_one, one_mul])
   gcongr
 
-/-- **Corollary 1, second display, at the printed generality** — up to the
-orientation choice.  Over `ℝ` the unit scalar `c` is `±1`, which is exactly the
+/-- **Corollary 1, second display, the source-faithful `d = 1` specialization**
+— up to the orientation choice.  Over `ℝ` the unit scalar `c` is `±1`, which is exactly the
 sign the paper fixes by requiring `v̂ᵀ v ≥ 0`; over `ℂ` a phase is the honest
 generalization.  See `yuWangSamworth_eigenvector_real_le` for the real form,
 which is the printed display with the inherited normalization written out. -/

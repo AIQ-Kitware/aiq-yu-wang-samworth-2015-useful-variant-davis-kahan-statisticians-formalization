@@ -70,10 +70,11 @@ surface, and `Symmetric/Corollary1.lean` carries the rank-one case together with
 is genuinely arbitrary: for `Σ = diag(1, 0)` and `Σ̂ = I/2` every unit vector of
 the plane is admissible.
 
-## Two source defects, both machine checked
+## Source defects, machine checked
 
-The paper contains two false printed statements.  Each is refuted here, and each
-has a proved repair; neither is silently corrected.
+The paper contains three false printed statements, and a fourth passage whose
+printed conventions make a theorem vacuous.  Each is refuted or documented here;
+none is silently corrected.
 
 * **Equation (4)** is missing a square on `2 − ‖v̂ − v‖²`.  The corrected
   identity and a counterexample to the printed polynomial are in
