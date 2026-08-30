@@ -157,8 +157,9 @@ Preparation only. Nothing here claims registration, acceptance, or peer review.
 **Two entries, and only two.** A general-index-set prototype of Theorem 2's first
 conclusion lived here until 2026-08-29. It proved the Palomar mechanics work and
 `yws-symmetric` superseded it; leaving a third configuration in a submission
-repository only invited the question of which one was the claim. It stays in the
-authoritative repository as a regression.
+repository only invited the question of which one was the claim. It was retired
+from the authoritative repository too on 2026-08-30, when the embedded submission
+surface there was removed; git history is its archive.
 
 **The configuration directory is `registry/`, not `palomar/`.** It sat beside the
 Lean library directory `Palomar/` until 2026-08-29, and two paths differing only
@@ -217,15 +218,35 @@ lake build Palomar              # the entries; their Challenge modules carry hol
 
 ## Verifying an entry
 
-Comparator, `lean4export` and the independent NanoDa kernel are external tools.
-`lean4export` reads this repository's oleans, so it must be built at the Lean in
-`lean-toolchain` — including the nested `lean4export` package inside a comparator
-checkout, whose own pin is not the one you set on the checkout. With the tools on
-PATH:
+```bash
+python3 scripts/check_palomar_readiness.py        # static preflight, seconds
+scripts/verify_palomar.sh                         # + build + Comparator + NanoDa
+scripts/verify_palomar.sh yws-symmetric           # one entry
+scripts/verify_palomar.sh --fake-landrun          # if landrun is unavailable
+```
+
+The preflight checks what can be checked without Lean: no submodules, no LFS
+pointers, no committed build artifacts, one root licence, every dependency pinned
+to a credential-free GitHub URL at a full SHA, the metadata shape, the Comparator
+configuration keys, and — the one that matters — that each Challenge's
+*transitive* import closure reaches no module in this repository.
+`verify_palomar.sh` then builds every declared library, including `Palomar`, which
+the default build deliberately excludes because its Challenge modules carry
+statement-side holes, and runs the real Comparator with the independent NanoDa
+kernel.
+
+Both scripts live here rather than upstream because they ask whether *this*
+repository verifies. That is not a question the development repository can answer
+about itself.
+
+Comparator, `lean4export` and NanoDa are external tools. `lean4export` reads this
+repository's oleans, so it must be built at the Lean in `lean-toolchain` —
+including the nested `lean4export` package inside a comparator checkout, whose own
+pin is not the one you set on the checkout. With the tools on PATH the underlying
+command is:
 
 ```bash
 lake env comparator registry/yws-symmetric/comparator.json
-lake env comparator registry/yws-rectangular/comparator.json
 ```
 
 `lake env` is required: the exporter needs the Lake search path to find the

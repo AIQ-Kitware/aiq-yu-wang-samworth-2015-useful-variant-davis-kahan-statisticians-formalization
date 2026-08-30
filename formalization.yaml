@@ -161,8 +161,8 @@ status:
     prototype of Theorem 2's first conclusion was carried until 2026-08-29;
     `registry/yws-symmetric` superseded it and it was removed, because a third
     configuration in a submission repository only invites the question of which
-    one is the claim. It remains in the authoritative repository as a
-    regression.
+    one is the claim. It was retired from the authoritative repository too on
+    2026-08-30, when the embedded submission surface there was removed.
 
     The Challenge modules carry the deliberate statement-side holes the
     Comparator convention requires; no library declaration is left incomplete.

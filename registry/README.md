@@ -26,8 +26,9 @@ explicitly, so neither has to live in a directory named after it.
 Two entries, and only two. A general-index-set prototype of Theorem 2's first
 conclusion was carried here until 2026-08-29; it proved the Palomar mechanics
 work, `yws-symmetric` superseded it, and leaving it in a submission repository
-only invited the question of which configuration was the claim. It remains in the
-authoritative repository as a regression.
+only invited the question of which configuration was the claim. It was retired
+from the authoritative repository too on 2026-08-30, when the embedded submission
+surface there was removed; git history is its archive.
 
 The clause-by-clause basis for every selection is
 [`YWS_SOURCE_CONTRACT.md`](YWS_SOURCE_CONTRACT.md). What the entries claim, what
