@@ -168,7 +168,13 @@ singular-vector equations.**
 At the indices the source rank condition selects, every `σ_{r+i}` is positive,
 and `V` is a right singular block exactly when it is orthonormal and carries an
 orthonormal family `U` of left singular vectors with `A v_j = σ_j u_j` and
-`Aᵀ u_j = σ_j v_j`, which is what Theorem 3 prints. -/
+`Aᵀ u_j = σ_j v_j`, which is what Theorem 3 prints.
+
+The hypothesis is about the map named in the statement. Read at the population
+`A` — where the source rank condition sits — it says the population block below
+is the printed one. The paper likewise puts no rank condition on `Â`, and at a
+sample index past `rank(Â)` its `Â v̂_j = σ̂_j û_j` reads `Â v̂_j = 0`, which is
+exactly what the Gram form gives there. -/
 theorem isRightSingularBlock_iff_pairedSingularVectors {p q d r s : ℕ}
     {A : Rn q →ₗ[ℝ] Rn p} {hr : r ≤ s} {hd : d = s - r + 1}
     (hrank : s < finrank ℝ (LinearMap.range A)) (V : Fin d → Rn q) :

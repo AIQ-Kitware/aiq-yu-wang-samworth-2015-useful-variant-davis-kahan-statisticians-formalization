@@ -287,6 +287,31 @@ removed, Comparator requires the Challenge and Solution copies of `sinThetaDist`
 
 ---
 
+## Authorship, checked before publishing it
+
+Palomar publishes `project.authors`, so it was verified rather than inherited.
+`Jon Crall` and `Edward Wang` are the two names, and both are supported by
+repository evidence: `git log` in the authoritative repository attributes 1943
+commits to `edward.wang@kitware.com` against 2908 to `jon.crall@kitware.com`
+(plus 56 to a second address of Jon's), and commit `33f0c18b` — the maintainer's
+own `formalization.yaml` v0.4 migration — records the decision in terms:
+*"Authors are Jon Crall and Edward Wang, maintainer Jon Crall, per the
+maintainer. AI models are disclosed under automation, never as authors."* That is
+a maintainer adjudication supported by contribution evidence, not an inference
+from the mathematical paper's authorship or from organizational association, and
+it is retained.
+
+**HUMAN REVIEW ITEM, minor.** The repository does not apply the second half of
+that rule uniformly at file level: Mathlib-style `Authors:` headers under
+`YuWangSamworth2015/**` name model identifiers (`Claude Opus 5`,
+`OpenAI GPT-5.6 Thinking`) beside `Jon Crall`, while the two Palomar
+Challenge/Solution pairs name `Jon Crall, Edward Wang`. The published metadata is
+the one Palomar reads and it is correct; the file headers are a per-file
+provenance convention that disagrees with the stated policy. Reconciling them is
+a sweep across the package and was not done in this pass.
+
+---
+
 ## None of this was Palomar-specific convenience
 
 Every library item this pass required is a paper-facing statement the
