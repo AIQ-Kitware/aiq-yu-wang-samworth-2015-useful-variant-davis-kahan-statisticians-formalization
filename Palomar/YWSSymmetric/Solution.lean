@@ -74,13 +74,21 @@ def PopulationBoundaryGap {p : ℕ}
       Delta ≤ hSigma.eigenvalues (finrank_Rp p) j
                 - hSigma.eigenvalues (finrank_Rp p) q)
 
-/-- **The paper's denominator `Δ = min(λ_{r−1} − λ_r, λ_s − λ_{s+1})`, exactly.**
+/-- **The paper's denominator `Δ = min(λ_{r−1} − λ_r, λ_s − λ_{s+1})`.**
 
-Outside the full-block case this says `Delta` is the *greatest* real satisfying
-both boundary inequalities, which is that minimum with a missing endpoint
-omitted. For the full block `r = 0`, `s + 1 = p` there are no exterior
-eigenvalues and the paper's conventions make both gaps `+∞`; the first disjunct
-records that, and the theorems are then available for every positive `Delta`. -/
+Outside the full-block case the second disjunct says that `Delta` is the
+*greatest* real satisfying both boundary inequalities, which is exactly that
+minimum with a missing endpoint omitted. There `Delta` **is** the paper's
+denominator, not merely a lower bound for it.
+
+The first disjunct is the full block `r = 0`, `s + 1 = p`. There are then no
+exterior eigenvalues at all, the paper's conventions make both exterior gaps
+`+∞`, and no greatest finite real satisfies the two vacuous clauses — so the
+second disjunct cannot be met and a separate branch is needed. In that case the
+selected frame spans the whole space and `‖sin Θ‖_F = 0`, so every positive
+finite `Delta` is an admissible surrogate for the infinite source denominator and
+the theorems below hold for each of them. This branch does not assert that a
+finite `Delta` is the paper's `+∞`. -/
 def SourcePopulationGap {p : ℕ}
     (Sigma : Rp p →ₗ[ℝ] Rp p) (hSigma : Sigma.IsSymmetric)
     (r s : ℕ) (Delta : ℝ) : Prop :=

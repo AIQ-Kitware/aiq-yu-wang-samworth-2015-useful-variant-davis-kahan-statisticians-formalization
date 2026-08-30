@@ -22,9 +22,18 @@ whose point is that Theorem 1's mixed separation
 `δ = inf{|λ̂ − λ| : λ ∈ [λ_s, λ_r], λ̂ ∈ (−∞, λ̂_{s+1}] ∪ [λ̂_{r-1}, ∞)}`
 
 can vanish while the population eigenvalues are as well separated as one likes.
-At the fourth eigenvector `λ₄ = 20` sits inside the ray `(−∞, λ̂₅] = (−∞, 21]`,
-so `δ = 0` and Theorem 1 says nothing at all — while the population gap is
-`min(λ₃ − λ₄, λ₄ − λ₅) = 10` and Theorem 2 applies unconditionally.
+
+The article takes the eigenvectors for the second, third and fourth largest
+eigenvalues, so `r = 2` and `s = 4` in its one-based indexing — the zero-based
+Lean block `1, 2, 3`.  The population block interval is then `[λ₄, λ₂] = [20, 40]`
+and the exterior rays are `(−∞, λ̂₅] = (−∞, 21]` and `[λ̂₁, ∞) = [54, ∞)`.  Since
+`λ₄ = 20` lies inside the lower ray, `δ = 0` and Theorem 1 says nothing at all —
+while the population gap is `min(λ₁ − λ₂, λ₄ − λ₅) = 10` and Theorem 2 applies
+unconditionally.
+
+Note that `δ` ranges over the two exterior *rays*, not over the sample
+eigenvalues, so a single population eigenvalue reaching a ray endpoint is enough
+to collapse it.
 
 ## Section 3, the audit of statistical applications
 
@@ -42,8 +51,9 @@ formalizable; their deterministic mathematical content is, and is proved here:
   difference between the two routes is the event, not the bound;
 * the Section 1 model is a witness that the event is not automatic — there
   `ε = 11 > 10 = Δ`, so the recovery yields nothing;
-* and in that same model *no* sample eigenvalue lies in the interval spanned by
-  the population block, so the hidden interval-counting requirement fails there
+* and in that same model the fifth sample eigenvalue has crossed into the
+  interval spanned by the article's population block while its population
+  counterpart has not, so the hidden interval-counting requirement fails there
   too.
 -/
 
@@ -113,22 +123,25 @@ def section1SampleData : Fin 5 → ℝ := fun i =>
   if (i : ℕ) = 0 then 54 else if (i : ℕ) = 1 then 37 else
     if (i : ℕ) = 2 then 32 else if (i : ℕ) = 3 then 23 else 21
 
-/-- **Theorem 1's separation vanishes at the fourth eigenvector.**
+/-- **Theorem 1's separation vanishes at the article's block `r = 2`, `s = 4`.**
 
-`λ₄ = 20` lies in the ray `(−∞, λ̂₅] = (−∞, 21]`, so the infimum defining `δ`
-is `0`: for this pair of matrices Theorem 1 has no content at the block `r = s =
-4`, however large the population gaps are. -/
+The block interval is `[λ₄, λ₂] = [20, 40]` and the lower exterior ray is
+`(−∞, λ̂₅] = (−∞, 21]`; the two meet, so the infimum defining `δ` is `0` and
+Theorem 1 has no content there, however large the population gaps are.  The
+arguments are the zero-based Lean indices of the one-based `λ₄`, `λ₂`, `λ̂₅` and
+`λ̂₁`. -/
 theorem section1_mixedSeparation_eq_zero :
-    mixedSeparation (section1PopulationData 3) (section1PopulationData 3)
-      (section1SampleData 4) (section1SampleData 1) = 0 :=
-  mixedSeparation_eq_zero_of_le le_rfl
+    mixedSeparation (section1PopulationData 3) (section1PopulationData 1)
+      (section1SampleData 4) (section1SampleData 0) = 0 :=
+  mixedSeparation_eq_zero_of_le
+    (by norm_num [section1PopulationData])
     (by norm_num [section1PopulationData, section1SampleData])
 
-/-- **The population gap at the same block is `10`.**  `min(λ₃ − λ₄, λ₄ − λ₅) =
-min(30 − 20, 20 − 10)`: the population eigenvalues are well separated, which is
+/-- **The population gap at the same block is `10`.**  `min(λ₁ − λ₂, λ₄ − λ₅) =
+min(50 − 40, 20 − 10)`: the population eigenvalues are well separated, which is
 the contrast the illustration is making. -/
 theorem section1_populationGap :
-    min (section1PopulationData 2 - section1PopulationData 3)
+    min (section1PopulationData 0 - section1PopulationData 1)
       (section1PopulationData 3 - section1PopulationData 4) = 10 := by
   norm_num [section1PopulationData]
 
@@ -146,7 +159,9 @@ noncomputable def section1Sample : E →ₗ[𝕜] E :=
   basisDiagonal b section1SampleData
 
 omit [FiniteDimensional 𝕜 E] in
-/-- The block of interest is the fourth coordinate. -/
+/-- The fourth coordinate is the eigenspace at `20`.  This is the singleton block
+`r = s = 4`, which is not the block the article selects; it is recorded because
+the two operator-level facts below are stated at it. -/
 theorem eigenspace_section1Population :
     eigenspace (section1Population b) ((20 : ℝ) : 𝕜) =
       b.spanIndices {i : Fin 5 | (i : ℕ) = 3} := by
@@ -157,10 +172,12 @@ theorem eigenspace_section1Population :
   fin_cases i <;> norm_num [section1PopulationData]
 
 omit [FiniteDimensional 𝕜 E] in
-/-- **The population gap of the block is `10`, at the operator level.**  The
-block carries only `20`, and its complement carries `50`, `40`, `30` and `10`,
-each at distance at least `10`.  So `YuWangSamworth2015.yuWangSamworth_alignedBasis_le`
-applies to this pair while Theorem 1 does not. -/
+/-- **The population gap of the singleton block `r = s = 4` is `10`, at the
+operator level.**  The block carries only `20`, and its complement carries `50`,
+`40`, `30` and `10`, each at distance at least `10`.  So
+`YuWangSamworth2015.yuWangSamworth_alignedBasis_le` applies to this pair while
+Theorem 1 does not.  `internalGap_section1_paperBlock` is the same fact at the
+block the article actually selects. -/
 theorem internalGap_section1 :
     InternalGap (section1Population b)
       (eigenspace (section1Population b) ((20 : ℝ) : 𝕜)) 10 := by
@@ -176,6 +193,24 @@ theorem internalGap_section1 :
   simp only [Set.mem_compl_iff, Set.mem_ofPred_eq] at hi
   rw [h20]
   fin_cases i <;> simp_all [section1PopulationData] <;> norm_num
+
+omit [FiniteDimensional 𝕜 E] in
+/-- **The population gap of the article's block `r = 2`, `s = 4` is `10`, at the
+operator level.**
+
+The block carries `40`, `30` and `20`; its complement carries `50` and `10`; the
+closest pair is at distance `10`.  So the population-gap theorems apply to this
+pair at the article's own block, while Theorem 1 does not. -/
+theorem internalGap_section1_paperBlock :
+    InternalGap (section1Population b)
+      (b.spanIndices {i : Fin 5 | 1 ≤ (i : ℕ) ∧ (i : ℕ) ≤ 3}) 10 := by
+  intro lam μ hlam hμ
+  rw [section1Population] at hlam hμ
+  obtain ⟨i, hi, rfl⟩ := restrictedSpectrum_basisDiagonal_subset b _ _ hlam
+  rw [OrthonormalBasis.orthogonal_spanIndices] at hμ
+  obtain ⟨j, hj, rfl⟩ := restrictedSpectrum_basisDiagonal_subset b _ _ hμ
+  simp only [Set.mem_ofPred_eq, Set.mem_compl_iff] at hi hj
+  fin_cases i <;> fin_cases j <;> simp_all [section1PopulationData] <;> norm_num
 
 /-- **The perturbation has operator norm `11`.**  The largest displacement is at
 the fifth coordinate, where `Σ̂` reads `21` against `Σ`'s `10`. -/
@@ -199,13 +234,29 @@ theorem section1_weylRecovery_fails :
   rw [opNorm_section1_perturbation]
   norm_num
 
-/-- **The hidden interval-counting requirement fails here too.**
+/-- **The hidden interval-counting requirement fails at the article's block.**
 
-No eigenvalue of `Σ̂` lies in the interval `[λ₄, λ₄]` spanned by the population
-block, so the two matrices do not have the same number of eigenvalues there.
-A spectral-clustering-style statement that assumes a population gap *and* equal
-interval counts is therefore assuming something this example violates, which is
-the paper's Section 3 point. -/
+The article's block is `r = 2`, `s = 4`, spanning the interval `[λ₄, λ₂] =
+[20, 40]`, which contains exactly the three population eigenvalues `40`, `30`,
+`20`.  The fifth sample eigenvalue `λ̂₅ = 21` has crossed into that interval while
+its population counterpart `λ₅ = 10` lies outside it, so `Σ̂` has one more
+eigenvalue there than `Σ`.  A spectral-clustering-style statement that assumes a
+population gap *and* equal interval counts is therefore assuming something this
+example violates, which is the article's Section 3 point. -/
+theorem section1_sample_crosses_into_paperBlock :
+    section1SampleData 4 ∈
+        Set.Icc (section1PopulationData 3) (section1PopulationData 1) ∧
+      section1PopulationData 4 ∉
+        Set.Icc (section1PopulationData 3) (section1PopulationData 1) := by
+  constructor
+  · simp only [Set.mem_Icc]
+    norm_num [section1SampleData, section1PopulationData]
+  · simp only [Set.mem_Icc, not_and]
+    norm_num [section1PopulationData]
+
+/-- **No sample eigenvalue lies in the singleton block `[λ₄, λ₄]`.**  An
+auxiliary observation on the same data, at the block `r = s = 4` rather than the
+article's `r = 2`, `s = 4`. -/
 theorem section1_no_sample_eigenvalue_in_block (i : Fin 5) :
     section1SampleData i ∉ Set.Icc (section1PopulationData 3) (section1PopulationData 3) := by
   simp only [Set.mem_Icc, not_and]

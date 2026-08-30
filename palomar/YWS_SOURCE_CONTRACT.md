@@ -1,273 +1,296 @@
-# Yu–Wang–Samworth 2015 — source contract for Palomar selection
+# Yu–Wang–Samworth 2015 — source contract for the Palomar selections
 
-Working document for the Palomar preparation pass. It records, clause by clause,
-what the published paper states and what the repository currently proves, so that
-a selection decision is made against the source rather than against a declaration
-name.
+Clause-by-clause record of what the published paper states and what the two
+prepared Palomar entries compare, so that a selection decision is made against
+the source rather than against a declaration name.
+
+**Regenerated 2026-08-29 from the final theorem types.** Every row below was
+re-read against the Lean signatures in the tree at that date, not carried over
+from an earlier state of this file.
 
 **Numbering is the published Biometrika numbering** — Theorem 1, Theorem 2,
-Corollary 1, Theorem 3, Lemma A1. Many Lean names still carry the 2014 preprint's
-single-counter numbering (Corollary 3, Theorem 4, Lemma 5); the correspondence is
-Corollary 1 = Corollary 3, Theorem 3 = Theorem 4, Lemma A1 = Lemma 5.
+Corollary 1, Theorem 3, Lemma A1. Many Lean names still carry the 2014
+preprint's single-counter numbering (Corollary 3, Theorem 4, Lemma 5); the
+correspondence is Corollary 1 = Corollary 3, Theorem 3 = Theorem 4,
+Lemma A1 = Lemma 5.
 
-**Sources used.** `prose/distilled_literature/YuWangSamworth2015_statistical_davis_kahan.tex`,
-which records a read of the published article on 2026-08-13 and carries the
-published indices, the published middle-block sharpness example and the Section 1
-numerical illustration; and
-`dev/yu-wang-samworth-2015-full-source-census.json`. The private preprint
-transcription is not consulted here and no row is resolved by it. Where a row
-below turns on a detail finer than the distilled TeX records, it says so.
+**Sources used.** The published Biometrika article (doi:10.1093/biomet/asv008),
+read directly for this pass on 2026-08-29;
+`prose/distilled_literature/YuWangSamworth2015_statistical_davis_kahan.tex`, the
+repository's transformative reconstruction; and
+`dev/yu-wang-samworth-2015-full-source-census.json`.
 
 **Ordering convention throughout:** eigenvalues and singular values decreasing,
-`λ₁ ≥ … ≥ λ_p`, block `1 ≤ r ≤ s ≤ p`, `d = s − r + 1`, `E := Σ̂ − Σ`,
-`D := Â − A`.
+`λ₁ ≥ … ≥ λ_p`, paper block `1 ≤ r ≤ s ≤ p`, `d = s − r + 1`, `E := Σ̂ − Σ`,
+`D := Â − A`. Lean indices are zero-based: the paper's `r…s` is the Lean block
+`r−1 … s−1`, and every "Challenge zero-based block" entry below is written in
+the Lean variables.
 
 ---
 
-## Row T1 — Theorem 1, the mixed-gap Davis–Kahan baseline
+## The two entries
 
-| clause | source | current Lean |
-| --- | --- | --- |
-| scalar field | real | `RCLike 𝕜` |
-| space | `Σ, Σ̂ ∈ ℝ^{p×p}` symmetric | abstract `E`, `[FiniteDimensional 𝕜 E]` |
-| block | eigenvector blocks `V = (v_r,…,v_s)`, `V̂` at the same indices | `U V : Submodule 𝕜 E` with `IsInvariant A U`, `IsInvariant B V` |
-| separation | `δ := inf{ \|λ̂ − λ\| : λ ∈ [λ_s, λ_r], λ̂ ∈ (−∞, λ̂_{s+1}] ∪ [λ̂_{r−1}, ∞) }`, conventions `λ̂₀ = −∞`, `λ̂_{p+1} = ∞` | `IntervalExteriorGap A B U V a b δ` |
-| exact or lower bound | the printed `δ` is an exact infimum | `IntervalExteriorGap` is a separation *hypothesis*, not an identification of `δ` |
-| sample separation | present — this is the point of Theorem 1, and why Theorem 2 supersedes it | present |
-| numerator | `‖Σ̂ − Σ‖_F`, and the source says both norms may be replaced simultaneously by the operator norm or **any orthogonally invariant norm** | `N.toFun (B − A)` for `N : UnitarilyInvariantSeminorm 𝕜 E` |
-| constant | `1` | `1` |
-| conclusion | subspace `sin Θ` Frobenius norm | `N.toFun (sinThetaMap U V)` |
-| production theorem | — | `yuWangSamworth_theorem1_uiNorm_le`, with `…_frobenius_le` and `…_opNorm_le` as specializations |
-| census status | — | `compiled_generalized` |
+| entry | comparator config | metadata | compared | source relationship |
+| --- | --- | --- | --- | --- |
+| symmetric | `palomar/yws-symmetric/comparator.json` | `palomar/yws-symmetric/formalization.yaml` | Theorem 2 (both conclusions), Corollary 1 (both displays) | `formalizes` — **exact** |
+| rectangular | `palomar/yws-rectangular/comparator.json` | `palomar/yws-rectangular/formalization.yaml` | Theorem 3 (right/left × sine/aligned), plus the two singular-frame equivalences | `adapts` — **source-corrected** |
 
-**Disposition: stronger implementation theorem; no paper-facing wrapper exists.**
-The unitarily-invariant-norm form is the right primary statement — the source
-advertises that scope explicitly, so proving it is proving Theorem 1 rather than
-overreaching. Three mismatches stand between it and a Palomar statement:
-
-1. **Scalar scope.** The paper is real. Presenting the `RCLike` form as "exactly
-   Theorem 1" would violate Phase 13.
-2. **Block versus invariant subspace.** The paper fixes eigenvector blocks at the
-   contiguous indices `r…s`; the Lean takes arbitrary invariant subspaces. That is
-   more general, but a reviewer cannot see the paper in it.
-3. **`δ` is a hypothesis, not the printed infimum.** Theorem 2 was tightened on
-   2026-08-17 so that `SourcePopulationGap` *identifies* `Δ`. Theorem 1 has had no
-   equivalent treatment.
-
-**NOT SELECTED, 2026-08-29, and the reason is a source question, not size.**
-
-Writing the printed `δ` exactly requires the paper's endpoint conventions for the
-*sample* spectrum, and as the distilled TeX records them they make Theorem 1
-vacuous at any block touching either end of the spectrum — including the top-`d`
-block, which is the common case in statistics. The TeX prints
-`λ̂₀ = −∞` and `λ̂_{p+1} = ∞`, so at `r = 1` the ray `[λ̂_{r−1}, ∞)` becomes all of
-`ℝ`, the infimum defining `δ` is `0`, and the hypothesis `δ > 0` is unsatisfiable;
-symmetrically at `s = p` for the other ray.
-
-The reading that makes the theorem say what it evidently means is the opposite
-one — `λ̂₀ = +∞` and `λ̂_{p+1} = −∞`, which make the missing ray **empty**, exactly
-as Theorem 2's `λ₀ = +∞`, `λ_{p+1} = −∞` do for the population gaps. Under that
-reading the exterior set is the sample eigenvalues genuinely outside the block,
-which is what the classical Davis–Kahan separation is.
-
-Two possibilities, and this repository cannot distinguish them from what is
-checked in: the distilled transcription swapped the two conventions, or the
-published article prints them as recorded and Theorem 1 is vacuous at end blocks.
-The first is more likely. Resolving it needs a fresh read of the Biometrika
-article, and it is a maintainer decision, not an agent's.
-
-Note that the Lean development is unaffected either way: it never used the printed
-conventions, phrasing the separation as `IntervalExteriorGap`, an intrinsic
-spectral condition. What is blocked is only the claim that a Palomar statement
-*is* the printed `δ`.
-
-Until that is settled, selecting Theorem 1 would mean either asserting a
-convention the source may not have, or comparing a statement that is vacuous
-exactly where the theorem is used. Neither is acceptable, so Theorem 1 is left
-out and the metadata says the substantive development formalizes it.
-
-The remaining work, once the convention is settled, is small: a paper-facing
-`theorem1_uiNorm` on `EuclideanSpace ℝ (Fin p)` at the block `r…s` modelled on
-`theorem2_sinTheta`, plus a Challenge-side unitarily-invariant-norm interface
-(subadditive, absolutely homogeneous, two-sided unitarily invariant — the three
-fields of `UnitarilyInvariantSeminorm`, which carries no positivity requirement)
-and an adapter constructing that structure from the interface.
+Not compared by either entry: Theorem 1, Appendix Lemma A1, the two Section 2
+sharpness constructions, the Section 1 numerical illustration, the Section 3
+audit content, and the two source-defect refutations. All are formalized in the
+development; see the rows below for Theorem 1 and Lemma A1.
 
 ---
 
-## Row T2-1 — Theorem 2, first conclusion (YWS-1)
+## Row T2-1 — Theorem 2, first conclusion
 
-| clause | source | current Lean |
+| clause | source | Challenge |
 | --- | --- | --- |
-| scalar field | real | `EuclideanSpace ℝ (Fin p)` ✓ |
-| block | `1 ≤ r ≤ s ≤ p`, `d = s − r + 1` | `hr : r ≤ s`, `hs : s < p`, `hd : d = s − r + 1` ✓ |
+| published result | Theorem 2, display (2) | — |
+| scalar field / space | real symmetric `Σ, Σ̂ ∈ ℝ^{p×p}` | `Rp p = EuclideanSpace ℝ (Fin p)`, `Sigma.IsSymmetric` ✓ |
+| source one-based block | `1 ≤ r ≤ s ≤ p`, `d = s − r + 1` | — |
+| Challenge zero-based block | — | `hr : r ≤ s`, `hs : s < p`, `hd : d = s - r + 1` ✓ |
+| source rank restriction | none in Theorem 2 | none ✓ |
 | population frame | orthonormal `V` with `Σ v_j = λ_j v_j` | `IsEigenvectorBlock Sigma hSigma hr hs hd V` ✓ |
 | sample frame | orthonormal `V̂` with `Σ̂ v̂_j = λ̂_j v̂_j`, **arbitrary** | `IsEigenvectorBlock SigmaHat …` — arbitrary supplied frame ✓ |
-| sample separation | **none** | none ✓ |
-| denominator | `Δ = min(λ_{r−1} − λ_r, λ_s − λ_{s+1})`, conventions `λ₀ = +∞`, `λ_{p+1} = −∞` | `SourcePopulationGap Sigma hSigma r s Delta` — identifies `Δ` as the greatest real satisfying the two boundary inequalities, with vacuous quantification for a missing endpoint and an explicit full-space branch for the `+∞` convention ✓ |
-| exact or lower bound | exact | **exact** ✓ |
-| numerator | `2 min(√d ‖E‖_op, ‖E‖_F)` | `2 * min (√d * ‖(SigmaHat − Sigma)‖_op) (frobeniusNorm (SigmaHat − Sigma))` ✓ |
-| conclusion | `‖sin Θ(V̂, V)‖_F` | `sinThetaNorm`, tied by an equality hypothesis to `TauCeti.sinThetaFrobenius (span V) (span V̂)` ✓ |
-| production theorem | — | `YuWangSamworth2015.theorem2_sinTheta` |
-| census status | — | `compiled_exact` |
+| arbitrary-frame status | every admissible orthonormal eigenframe, including under multiplicity | same; nothing pins `V̂` to a chosen eigenbasis ✓ |
+| sample-gap status | **none** | none ✓ |
+| exact denominator | `Δ = min(λ_{r−1} − λ_r, λ_s − λ_{s+1})` | `SourcePopulationGap Sigma hSigma r s Delta` — **identifies** `Δ` as the greatest real satisfying both boundary inequalities ✓ |
+| endpoint convention | `λ₀ = +∞`, `λ_{p+1} = −∞` | vacuous quantification for a missing endpoint; the full block `r = 0`, `s + 1 = p` is an explicit disjunct, sound because the sine distance is then `0` ✓ |
+| numerator and constant | `2 min(√d ‖E‖_op, ‖E‖_F)` | `2 * perturbation d (SigmaHat - Sigma)`, `perturbation = min (√d * opNorm) frobeniusNorm` ✓ |
+| conclusion | `‖sin Θ(V̂, V)‖_F` | `sinThetaDist V Vhat`, the Frobenius sine distance between the two spans ✓ |
+| source disposition | — | **exact** |
+| production theorem used by Solution | — | `YuWangSamworth2015.theorem2_sinTheta` |
 
-**Disposition: exact.** This is the reference standard for the whole pass.
+## Row T2-2 — Theorem 2, aligned-frame conclusion
 
----
+Hypotheses identical to T2-1.
 
-## Row T2-2 — Theorem 2, aligned-frame conclusion (YWS-2)
-
-Hypotheses identical to T2-1. Conclusion: `∃ Ô ∈ O(d)` with
-`‖V̂Ô − V‖_F ≤ 2^{3/2} min(√d ‖E‖_op, ‖E‖_F) / Δ`.
-
-`theorem2_alignedFrame` returns `O ∈ Matrix.orthogonalGroup (Fin d) ℝ` and bounds
-`√(∑ᵢ ‖∑ⱼ O j i • V̂ j − V i‖²)` — the supplied population frame is compared
-against, not some other frame spanning the same block, and the alignment is an
-honest orthogonal matrix.
-
-**Disposition: exact.**
-
----
+| clause | source | Challenge |
+| --- | --- | --- |
+| published result | Theorem 2, display (3) | — |
+| aligned conclusion | `∃ Ô ∈ O(d)` with `‖V̂Ô − V‖_F ≤ …`, compared against **the supplied** `V` | `∃ O ∈ Matrix.orthogonalGroup (Fin d) ℝ`, bounding `√(∑ᵢ ‖∑ⱼ O j i • V̂ j − V i‖²)` against the supplied `V` ✓ |
+| numerator and constant | `2^{3/2} min(√d ‖E‖_op, ‖E‖_F)` | `2 * Real.sqrt 2 * perturbation d (SigmaHat - Sigma)` ✓ |
+| source disposition | — | **exact** |
+| production theorem used by Solution | — | `YuWangSamworth2015.theorem2_alignedFrame` |
 
 ## Row C1-1 — Corollary 1, first display
 
-| clause | source | current Lean |
+| clause | source | Challenge |
 | --- | --- | --- |
-| scalar field | real | `RCLike 𝕜` |
-| space | `ℝ^{p×p}` | abstract `E`, `finrank 𝕜 E = n` |
-| vectors | unit `v, v̂` with `Σ v = λ_j v`, `Σ̂ v̂ = λ̂_j v̂`; `v̂` **arbitrary** at a repeated sample eigenvalue | `‖u‖ = 1`, `‖v‖ = 1`, `A u = λ_j • u`, `B v = λ̂_j • v` — arbitrary ✓ |
-| denominator | `Δ_j = min(λ_{j−1} − λ_j, λ_j − λ_{j+1})`, exact | `OrderedBlockBoundaryGap hA hn j j Δ` — a **lower bound**, not an identification |
-| sample separation | none | none ✓ |
-| numerator/constant | `2 ‖E‖_op` | `2 * ‖(B − A)‖_op` ✓ |
-| production theorem | — | `yuWangSamworth_corollary1_sinTheta_le` |
+| published result | Corollary 1, first display | — |
+| scalar field / space | real symmetric `Σ, Σ̂ ∈ ℝ^{p×p}` | `Rp p`, both `IsSymmetric` ✓ |
+| source one-based block | `j ∈ {1, …, p}`, `d = 1` | — |
+| Challenge zero-based block | — | `hj : j < p`, single index ✓ |
+| source rank restriction | none | none ✓ |
+| vectors | `v, v̂` with `Σ v = λ_j v`, `Σ̂ v̂ = λ̂_j v̂`; unit, as the `d = 1` case of Theorem 2 | `hv : ‖v‖ = 1`, `hvHat : ‖vHat‖ = 1`, the two eigenvector equations ✓ |
+| arbitrary-frame status | `v̂` **arbitrary** at a repeated sample eigenvalue | arbitrary ✓ |
+| sample-gap status | none | none ✓ |
+| exact denominator | `Δ_j = min(λ_{j−1} − λ_j, λ_j − λ_{j+1})` | `SourcePopulationGap Sigma hSigma j j Delta` — identified, not bounded below ✓ |
+| endpoint convention | `λ₀ = +∞`, `λ_{p+1} = −∞` | as in T2-1; the `p = 1` case is the full-block disjunct ✓ |
+| numerator and constant | `2 ‖E‖_op` | `2 * opNorm (SigmaHat - Sigma)` ✓ |
+| conclusion | `sin Θ(v̂, v)` | `‖P_{span{v̂}^⊥} v‖`, the length of the component of `v` orthogonal to `v̂` ✓ |
+| source disposition | — | **exact** |
+| production theorem used by Solution | — | `YuWangSamworth2015.corollary1_sinTheta` |
 
 ## Row C1-2 — Corollary 1, second display
 
-Adds `v̂ᵀv ≥ 0` and concludes `‖v̂ − v‖ ≤ 2^{3/2} ‖E‖_op / Δ_j`. Lean:
-`yuWangSamworth_corollary1_real_le`, over a real `F`, with `0 ≤ ⟪v, u⟫`. Same
-denominator issue.
+Hypotheses as C1-1 plus the printed orientation condition.
 
-**Disposition for both: printed hypothesis, but two mismatches.** The gap
-hypothesis is the printed one in *shape* — only the two neighbouring population
-eigenvalues — which is the hard part and is already right. What is missing is the
-`SourcePopulationGap` exactness treatment that Theorem 2 received, and the real
-`EuclideanSpace ℝ (Fin p)` presentation. Both are wrapper work, not new
-mathematics.
+| clause | source | Challenge |
+| --- | --- | --- |
+| published result | Corollary 1, second display | — |
+| orientation | `v̂ᵀv ≥ 0` | `hsign : 0 ≤ inner ℝ vHat v` ✓ |
+| numerator and constant | `2^{3/2} ‖E‖_op` | `2 * Real.sqrt 2 * opNorm (SigmaHat - Sigma)` ✓ |
+| conclusion | `‖v̂ − v‖` | `‖vHat - v‖` ✓ |
+| source disposition | — | **exact** |
+| production theorem used by Solution | — | `YuWangSamworth2015.corollary1_alignedVector` |
 
-**Sample-degeneracy witness:** `yuWangSamworth_corollary1_scalarSample` — for
-`Σ = diag(1,0)` and `Σ̂ = I/2` every unit vector is an admissible `v̂`. This is the
-semantic regression test named in Phase 6.
+**Sample-degeneracy witness, kept as a regression:**
+`yuWangSamworth_corollary1_scalarSample` — for `Σ = diag(1,0)` and `Σ̂ = I/2`
+every unit vector of the plane is an admissible `v̂`, and the corollary bounds
+the angle for each of them. Not compared; it is the evidence that the
+arbitrary-frame clause above has content.
 
 ---
 
 ## Rows T3-R-1 / T3-L-1 — Theorem 3, right and left sine conclusions
 
-| clause | source | current Lean |
+| clause | source | Challenge |
 | --- | --- | --- |
-| scalar field | real | `RCLike 𝕜` |
-| shape | `A, Â ∈ ℝ^{p×q}`, rectangular | `A Â : E →ₗ[𝕜] F`, distinct spaces ✓ |
-| block | `1 ≤ r ≤ s ≤ rank(A)`, `d = s − r + 1` | `hsn : s + 1 ≤ n`, `hd : r + d = s + 1`, block `consecutiveEmb` ✓ |
-| frames | ordered singular frames, arbitrary | `IsOrderedRightSingularFrame` / `…Left…`, arbitrary ✓ |
-| denominator | `Δ_sv = min(σ_{r−1}² − σ_r², σ_s² − σ_{s+1}²)` with conventions `σ₀² = +∞` and **`σ_{rank(A)+1}² = −∞`, which is false** | two lower-bound clauses on `A.singularValues q ^ 2 − A.singularValues p ^ 2` at the ambient indices |
-| exact or lower bound | printed as an exact minimum | lower bound |
-| sample separation | none | none ✓ |
-| numerator | `2 (2σ₁ + ‖D‖_op) min(√d ‖D‖_op, ‖D‖_F)` | same, with `A.singularValues 0` for `σ₁` ✓ |
-| production theorem | — | `yuWangSamworth_rightSingularSubspace_block_le`, `yuWangSamworth_leftSingularSubspace_block_le` |
-| census status | — | `compiled_corrected` |
+| published result | Theorem 3, first display (right); the "identical bounds also hold" sentence for `U`, `Û` (left) | — |
+| scalar field / shape | real `A, Â ∈ ℝ^{p×q}` | `A Ahat : Rn q →ₗ[ℝ] Rn p` ✓ |
+| source one-based block | `1 ≤ r ≤ s ≤ rank(A)`, `d = s − r + 1` | — |
+| Challenge zero-based block | — | `hr : r ≤ s`, `hd : d = s - r + 1` ✓ |
+| **source rank restriction** | `s ≤ rank(A)` | `hrank : s < finrank ℝ (LinearMap.range A)` — **retained**; `s < q`, `s < p`, `0 < q`, `0 < p` are derived from it inside the proof and are not caller hypotheses ✓ |
+| frames | orthonormal `V` (resp. `U`) with `A v_j = σ_j u_j` (resp. `Aᵀ u_j = σ_j v_j`) | `IsRightSingularBlock` / `IsLeftSingularBlock`: orthonormal plus the Gram equations `AᵀA vᵢ = σ²_{r+i} vᵢ`, `A Aᵀ uᵢ = σ²_{r+i} uᵢ`. Equivalent to the printed pair at these indices, and that equivalence is itself compared — see rows T3-EQ below ✓ |
+| arbitrary-frame status | arbitrary orthonormal singular frame, no multiplicity assumption | arbitrary ✓ |
+| sample-gap status | none | none ✓ |
+| exact denominator | `Δ_sv = min(σ²_{r−1} − σ²_r, σ²_s − σ²_{s+1})` | `SourceSingularGap q A r s Delta` on the right, `SourceSingularGap p A r s Delta` on the left — **identifies** `Δ` as the greatest real satisfying both boundary inequalities ✓ |
+| **endpoint convention** | printed `σ²₀ = +∞` and `σ²_{rank(A)+1} = −∞`; **the second is false** | corrected to the ambient convention the paper's own proof uses: `σ²₀ = +∞`, `σ²_{q+1} = −∞` on the right and `σ²_{p+1} = −∞` on the left, with `σ_j = 0` past the rank. Where the block ends at the rank the lower gap is the finite `σ²_s − 0`. The full-ambient-block case is an explicit disjunct, sound because the frame then spans everything **corrected** |
+| numerator and constant | `2 (2σ₁ + ‖D‖_op) min(√d ‖D‖_op, ‖D‖_F)` | `2 * coefficient d A (Ahat - A)`, `coefficient = (2 * σ₁ + opNorm D) * min (√d * opNorm D) (frobeniusNorm D)`, with `σ₁ = A.singularValues 0` ✓ |
+| conclusion | `‖sin Θ(V̂, V)‖_F` (resp. `‖sin Θ(Û, U)‖_F`) | `sinThetaDist V Vhat` / `sinThetaDist U Uhat` ✓ |
+| source disposition | — | **source-corrected**, defect disclosed |
+| production theorems used by Solution | — | `YuWangSamworth2015.theorem3_rightSinTheta`, `YuWangSamworth2015.theorem3_leftSinTheta` |
 
-**Disposition: corrected source defect.** The printed convention
-`σ_{rank(A)+1}² := −∞` makes the denominator infinite when `s = rank(A)`, so the
-printed bound asserts that the two singular subspaces coincide when they can be
-orthogonal. Refuted by `yuWangSamworth_theorem3_printed_rankBoundary_refutation`
-and its Euclidean instance, which also exhibit `‖sin Θ‖_F = 1`. The corrected
-convention is the ambient one the paper's own proof uses — pass to `AᵀA` with
-eigenvalues `σ₁² ≥ … ≥ σ_q²` and apply Theorem 2, whose convention is
-`λ_{q+1} := −∞` at the ambient index `q`, with `σ_j := 0` for `min(p,q) < j ≤ q`;
-`σ_{p+1}² := −∞` on the left. Lean has always used that reading.
+**The defect.** The printed convention `σ²_{rank(A)+1} := −∞` makes the
+denominator infinite when `s = rank(A)`, so the printed bound asserts that the
+two singular subspaces coincide when they can be orthogonal. Refuted by
+`yuWangSamworth_theorem3_printed_rankBoundary_refutation` and its Euclidean
+instance, which exhibit `‖sin Θ‖_F = 1` for two rank-one orthogonal projections
+of the plane. **This entry must be labelled corrected, never exact, and must
+disclose the defect.** Its metadata says `relationship: adapts`.
 
-**This entry must be labelled corrected, never exact, and must disclose the
-defect.**
-
----
+**What is *not* changed.** The paper's own block restriction `s ≤ rank(A)` is a
+separate matter and is kept. The lower-level theorems
+`yuWangSamworth_rightSingularSubspace_block_le` and its three companions remain
+in the development without it, which is a valid generalization; the Palomar
+statements deliberately compare at the paper's scope instead.
 
 ## Rows T3-R-2 / T3-L-2 — Theorem 3, aligned-frame conclusions
 
-Source: `∃ Ô ∈ O(d)` with
-`‖V̂Ô − V‖_F ≤ 2^{3/2} (2σ₁ + ‖D‖_op) min(√d ‖D‖_op, ‖D‖_F) / Δ_sv`, and the
-identical statement on the left.
+Hypotheses identical to T3-R-1 / T3-L-1.
 
-Current Lean: `yuWangSamworth_rightSingularAlignedBasis_block_le` and its left
-twin conclude
+| clause | source | Challenge |
+| --- | --- | --- |
+| published result | Theorem 3, second display, and the same for the left blocks | — |
+| aligned conclusion | `∃ Ô ∈ O(d)` with `‖V̂Ô − V‖_F ≤ …` against **the supplied** `V` | `∃ O ∈ Matrix.orthogonalGroup (Fin d) ℝ` bounding `√(∑ᵢ ‖∑ⱼ O j i • V̂ j − V i‖²)` ✓ |
+| numerator and constant | `2^{3/2} (2σ₁ + ‖D‖_op) min(√d ‖D‖_op, ‖D‖_F)` | `2 * Real.sqrt 2 * coefficient d A (Ahat - A)` ✓ |
+| source disposition | — | **source-corrected** (the rank-boundary defect, unchanged from the sine rows) |
+| production theorems used by Solution | — | `YuWangSamworth2015.theorem3_rightAlignedFrame`, `YuWangSamworth2015.theorem3_leftAlignedFrame` |
 
-```
-∃ w ŵ, Orthonormal w ∧ Orthonormal ŵ ∧ span w = span v ∧ span ŵ = span v̂ ∧
-       √(∑ᵢ ‖ŵ i − w i‖²) ≤ …
-```
+The printed *shape* — rotate `V̂` by an orthogonal `Ô` and compare against the
+supplied `V` — was closed on 2026-08-29. Before that the only statements
+concluded that *some* pair of frames spanning the two blocks achieves the bound,
+which is the basis-free content and proves the numerical claim but is not what
+the paper says. The alignment step is
+`exists_orthogonal_sqrt_sum_sq_norm_sub_le`, which needs only two orthonormal
+frames and a Frobenius sine bound, so no perturbation argument is duplicated.
 
-**Disposition: CLOSED 2026-08-29 — the printed shape is now stated.**
-`yuWangSamworth_rightSingularAlignedFrame_block_le` and its left twin conclude the
-printed conclusion: a unitary `Ô` on the block's coordinate space with
-`‖V̂ Ô − V‖_F ≤ …` against the supplied `V`. The alignment half was first factored
-out as `exists_unitary_sqrt_sum_sq_norm_frameComp_sub_le` and its real matrix form
-`exists_orthogonal_sqrt_sum_sq_norm_sub_le`, which need only two orthonormal
-frames and any Frobenius sine bound, so the Procrustes step now exists once
-instead of twice.
+## Rows T3-EQ — the singular-frame representation, machine-checked
 
-The finding that prompted this, recorded for the archive: this was the
-basis-free content of the claim and it did prove the numerical bound, but it did
-not say what the paper says — the paper rotates `V̂` by an orthogonal `Ô` and
-compares against **the supplied `V`**, whereas the old statement asserted only
-that *some* pair of frames spanning the two blocks achieves the bound.
+The paper writes the printed hypothesis as the paired singular-vector equations
+`A v_j = σ_j u_j` and `Aᵀ u_j = σ_j v_j`; its proof immediately passes to the
+Gram operators, and the Challenge states the Gram form. These two rows prove the
+two readings agree, so the choice is notational rather than a change of
+hypothesis.
 
-This is exactly the defect that was found and closed for Theorem 2 on 2026-08-13,
-when `yuWangSamworth_alignedBasis_*` was superseded by `yuWangSamworth_alignedFrame_*`
-and then by `theorem2_alignedFrame`. **The correction was never propagated to
-Theorem 3.** There is no `…AlignedFrame…` declaration for singular blocks; a grep
-for `Matrix.orthogonalGroup` in the package reaches `Symmetric/Theorem2.lean` and
-`Core/Procrustes.lean` only.
+| clause | content |
+| --- | --- |
+| compared declarations | `YWSRectangular.isRightSingularBlock_iff_pairedSingularVectors`, `YWSRectangular.isLeftSingularBlock_iff_pairedSingularVectors` |
+| statement | at a block with `s < rank(A)`, `IsRightSingularBlock A hr hd V` holds iff `V` is orthonormal and there is an orthonormal `U` with `A v_i = σ_{r+i} u_i` and `Aᵀ u_i = σ_{r+i} v_i`; and the mirror image on the left |
+| why the rank condition is needed | it is exactly what makes every selected `σ_{r+i}` strictly positive, so `u_i := σ_{r+i}⁻¹ A v_i` is defined and orthonormal |
+| source disposition | supporting equivalence; it is *not* one of the paper's numbered results and is not counted as one |
+| production theorems used by Solution | `YuWangSamworth2015.isRightSingularBlock_iff_pairedSingularVectors`, `YuWangSamworth2015.isLeftSingularBlock_iff_pairedSingularVectors` |
 
-It was closed by the route predicted here: `frameComp`,
-`frameAlignMatrix_mem_orthogonalGroup` and
-`exists_unitary_sum_sq_norm_frameComp_sub_le` in `Core/Procrustes.lean` were
-already stated for arbitrary frames, so it was a transport rather than a new
-perturbation argument.
+---
+
+## Row T1 — Theorem 1, the mixed-gap Davis–Kahan baseline
+
+**NOT SELECTED.** Formalized in the development; not compared by either entry.
+
+| clause | source | current Lean |
+| --- | --- | --- |
+| published result | Theorem 1, display (1) | — |
+| scalar field | real | `RCLike 𝕜` |
+| space | `Σ, Σ̂ ∈ ℝ^{p×p}` symmetric | abstract `E`, `[FiniteDimensional 𝕜 E]` |
+| block | eigenvector blocks `V = (v_r,…,v_s)`, `V̂` at the same indices | `U V : Submodule 𝕜 E` with `IsInvariant A U`, `IsInvariant B V` |
+| separation | `δ := inf{ \|λ̂ − λ\| : λ ∈ [λ_s, λ_r], λ̂ ∈ (−∞, λ̂_{s+1}] ∪ [λ̂_{r−1}, ∞) }`, conventions `λ̂₀ = −∞`, `λ̂_{p+1} = +∞` | `IntervalExteriorGap A B U V a b δ` |
+| exact or lower bound | the printed `δ` is an exact infimum | a separation *hypothesis*, not an identification of `δ` |
+| sample separation | present — this is the point of Theorem 1, and why Theorem 2 supersedes it | present |
+| numerator | `‖Σ̂ − Σ‖_F`, and the source says both norms may be replaced simultaneously by the operator norm or **any orthogonally invariant norm** | `N.toFun (B − A)` for `N : UnitarilyInvariantSeminorm 𝕜 E` |
+| constant | `1` | `1` |
+| production theorem | — | `yuWangSamworth_theorem1_uiNorm_le`, with `…_frobenius_le` and `…_opNorm_le` as specializations |
+
+**The endpoint question is now resolved, and it resolves against the printed
+statement.** This file previously recorded, as an open maintainer question,
+whether the published article really prints `λ̂₀ = −∞` and `λ̂_{p+1} = +∞` or
+whether the repository's transcription had swapped them. The published Biometrika
+article was read directly on 2026-08-29. **It prints them as recorded.** With the
+published rays `(−∞, λ̂_{s+1}] ∪ [λ̂_{r−1}, ∞)`, that makes `[λ̂₀, ∞) = ℝ` at
+`r = 1` and `(−∞, λ̂_{p+1}] = ℝ` at `s = p`, so the infimum defining `δ` is `0`
+and the hypothesis `δ > 0` is unsatisfiable at any block touching either end of
+the spectrum — including the top-`d` block, the common case in statistics. The
+reading that makes the theorem say what it evidently means is the opposite one,
+`λ̂₀ = +∞` and `λ̂_{p+1} = −∞`, which makes the missing ray empty, exactly as
+Theorem 2's `λ₀ = +∞`, `λ_{p+1} = −∞` do for the population gaps.
+
+So this is a **third printed defect in the paper**, alongside Equation (4) and
+Theorem 3's rank boundary, and it is milder than either: it degrades Theorem 1 to
+vacuity at end blocks rather than making a false assertion, and Theorem 1 is the
+baseline the paper is arguing *against*, not a contribution of it. Note also that
+the paper's own Section 1 illustration is chosen at `r = 2`, `s = 4` in a
+five-dimensional example, an interior block, where `δ = 0` for the honest reason
+that `λ₄ = 20` lies in the ray `(−∞, λ̂₅] = (−∞, 21]` and not because of the
+endpoint convention.
+
+**Selecting Theorem 1 would therefore be a third `adapts` entry**, with its own
+disclosed correction, not a `formalizes` one. That is a scope decision for the
+maintainer, and it is deliberately not taken here. Two further mismatches would
+also have to be closed first: the Lean statement is over `RCLike 𝕜` and over
+arbitrary invariant subspaces rather than the paper's real contiguous blocks, and
+`δ` is a hypothesis rather than the printed infimum. Neither is hard — a
+paper-facing `theorem1_uiNorm` on `EuclideanSpace ℝ (Fin p)` modelled on
+`theorem2_sinTheta`, plus a Challenge-side unitarily-invariant-norm interface —
+but neither is done.
+
+**HUMAN REVIEW ITEM.** The finding above is recorded here and in the two entry
+metadata files' scope fields. It is *not* yet recorded as a gap row in
+`dev/yu-wang-samworth-2015-full-source-census.json`, whose
+`published_source_audit` currently notes only that the published article fixes
+the preprint's wrong *indices* `λ̂_{s−1}`/`λ̂_{r+1}`, without observing that the
+*values* it assigns to `λ̂₀` and `λ̂_{p+1}` are inverted. Adding that row is
+census maintenance and belongs with a maintainer's review of this pass.
 
 ---
 
 ## Row A1 — Appendix Lemma A1
 
-Orthonormal compression cannot increase the Frobenius norm, with equality for
-orthonormal rows. Lean: `yuWangSamworth_lemma5_orthonormalColumns`,
+**NOT SELECTED.** Orthonormal compression cannot increase the Frobenius norm,
+with equality for orthonormal rows. Lean:
+`yuWangSamworth_lemma5_orthonormalColumns`,
 `yuWangSamworth_lemma5_orthonormalRows` (preprint numbering in the names),
-`compiled_generalized`. Optional for Palomar by the task's own instruction.
+census status `compiled_generalized`. It is a proof tool of the paper rather
+than one of its results, and neither entry compares it.
 
 ---
 
-## Known source defects, neither of which may be concealed
+## Known source defects, none of which may be concealed
 
 1. **Equation (4)** — the printed double-angle identity omits a square on
    `(2 − ‖v̂ − v‖²)`. Corrected identity `yuWangSamworth_equation4`; printed form
    refuted at `c = 3/5` by `yuWangSamworth_equation4_printed_counterexample`.
-   Not selected in either entry; to be disclosed in metadata.
-2. **Theorem 3's rank-boundary convention** — as above. Selected, corrected, and
-   disclosed.
+   Not selected in either entry; disclosed in both entries' `fidelity`.
+2. **Theorem 3's rank-boundary convention** — as in rows T3-R-1 / T3-L-1.
+   Selected, corrected, and disclosed; it is why the rectangular entry's source
+   relationship is `adapts`.
+3. **Theorem 1's sample endpoint conventions** — as in row T1. Not selected;
+   disclosed in both entries' `status.scope`.
 
 ---
 
-## Selection consequences
+## Mechanical status
 
-| entry | rows | outcome |
-| --- | --- | --- |
-| A, `palomar/yws-symmetric` | T2-1, T2-2 | **selected, exact** |
-| A, `palomar/yws-symmetric` | C1-1, C1-2 | **selected, exact** — `corollary1_sinTheta` and `corollary1_alignedVector` added |
-| — | T1 | **not selected**; source-convention question, see the row |
-| B, `palomar/yws-rectangular` | T3-R-1, T3-L-1 | **selected, corrected**, defect disclosed |
-| B, `palomar/yws-rectangular` | T3-R-2, T3-L-2 | **selected, corrected** — printed aligned shape proved 2026-08-29 |
-| — | A1 | not selected; formalized in the development, recorded in metadata |
+Both entries pass the real Comparator, the independent NanoDa kernel and Lean's
+own kernel, with axiom closure exactly `propext`, `Quot.sound`,
+`Classical.choice`, and each Challenge's transitive import closure reaches
+nothing in this repository. See `dev/palomar-readiness.md` for how to reproduce
+that, and `palomar/README.md` for what the status words do and do not mean.
 
-Both entries pass the real Comparator, NanoDa and Lean's kernel, with axiom
-closure exactly `propext`, `Classical.choice`, `Quot.sound`.
+`definition_names` is empty in both configurations, deliberately. Comparator
+treats a name listed there as a *definition hole*: it checks only that the name,
+type, universe levels and safety level agree, and it stops comparing the
+definition's value. Every helper definition in these Challenges is fully
+specified, so listing them would have weakened the comparison — with the lists
+removed, Comparator requires the Challenge and Solution copies of `sinThetaDist`,
+`SourceSingularGap` and the rest to agree as whole constants, bodies included.
 
-None of the library work this required was a Palomar-specific convenience: every
-item is a paper-facing statement the authoritative package should carry anyway,
-which is why it landed in `YuWangSamworth2015/` and not in a Palomar directory.
+---
+
+## None of this was Palomar-specific convenience
+
+Every library item this pass required is a paper-facing statement the
+authoritative package should carry anyway — the source rank condition on Theorem
+3, the exact `SourceSingularGap` denominator, the paired-singular-vector
+equivalence, and the Section 1 illustration at the article's own block. That is
+why they landed in `YuWangSamworth2015/` and not in a Palomar directory.

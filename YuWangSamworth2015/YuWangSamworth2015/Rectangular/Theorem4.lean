@@ -482,7 +482,8 @@ private theorem yuWangSamworth_gram_alignedBasis_frame_le
     _ = 2 * Real.sqrt 2 * c *
           min (Real.sqrt d * perturbOp) perturbFrob / Δ := by ring
 
-/-- **Theorem 3, right singular subspaces, at the printed generality.**
+/-- **Theorem 3, right singular subspaces, at the printed generality, with the
+corrected rank-boundary convention.**
 
 `V`, `V̂` are arbitrary orthonormal right singular frames of `A`, `Â` at a common
 index block, with a gap only on the population squared singular values.  The
@@ -509,7 +510,8 @@ theorem yuWangSamworth_rightSingularSubspace_frame_le
       hΔ hgap (opNorm_rightGram_sub_le_paperCoefficient A Â)
       (frobenius_rightGram_sub_le_paperCoefficient A Â)
 
-/-- **Theorem 3, left singular subspaces, at the printed generality.** -/
+/-- **Theorem 3, left singular subspaces, at the printed generality, with the
+corrected rank-boundary convention.** -/
 theorem yuWangSamworth_leftSingularSubspace_frame_le
     {A Â : E →ₗ[𝕜] F} [Nontrivial E] {m d : ℕ} {hm : finrank 𝕜 F = m}
     {e : Fin d ↪ Fin m} {u û : Fin d → F}
@@ -530,7 +532,8 @@ theorem yuWangSamworth_leftSingularSubspace_frame_le
       hΔ hgap (opNorm_leftGram_sub_le_paperCoefficient A Â)
       (frobenius_leftGram_sub_le_paperCoefficient A Â)
 
-/-- **Theorem 3, right aligned-frame conclusion, at the printed generality.** -/
+/-- **Theorem 3, right aligned-frame conclusion, at the printed generality, with
+the corrected rank-boundary convention.** -/
 theorem yuWangSamworth_rightSingularAlignedBasis_frame_le
     {A Â : E →ₗ[𝕜] F} [Nontrivial E] {n d : ℕ} {hn : finrank 𝕜 E = n}
     {e : Fin d ↪ Fin n} {v vHat : Fin d → E}
@@ -554,7 +557,8 @@ theorem yuWangSamworth_rightSingularAlignedBasis_frame_le
       hΔ hgap (opNorm_rightGram_sub_le_paperCoefficient A Â)
       (frobenius_rightGram_sub_le_paperCoefficient A Â)
 
-/-- **Theorem 3, left aligned-frame conclusion, at the printed generality.** -/
+/-- **Theorem 3, left aligned-frame conclusion, at the printed generality, with
+the corrected rank-boundary convention.** -/
 theorem yuWangSamworth_leftSingularAlignedBasis_frame_le
     {A Â : E →ₗ[𝕜] F} [Nontrivial E] {m d : ℕ} {hm : finrank 𝕜 F = m}
     {e : Fin d ↪ Fin m} {u û : Fin d → F}

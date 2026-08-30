@@ -80,9 +80,11 @@ The Frobenius `sin Θ` distance between the eigenspaces of `T` and `S` selected 
 an index set `s` is at most `2 ‖S − T‖_F / Δ`, where `Δ` separates the selected
 eigenvalues of `T` from the unselected ones.
 
-Every hypothesis constrains only the population operator `T`: `hgap` is a
-statement about the spectrum of `T` alone, and no gap in the spectrum of `S` is
-assumed. That is the point of the variant. -/
+Every *separation* hypothesis constrains only the population operator `T`: `hgap`
+is a statement about the spectrum of `T` alone, and no gap in the spectrum of `S`
+is assumed. (`S` is of course assumed symmetric, and the conclusion is read
+against its eigenvector basis; what is absent is any gap condition on its
+spectrum.) That is the point of the variant. -/
 theorem sqrt_sum_cross_le_of_population_gap
     (hT : T.IsSymmetric) (hS : S.IsSymmetric)
     (hn : finrank 𝕜 E = n) (s : Finset (Fin n))

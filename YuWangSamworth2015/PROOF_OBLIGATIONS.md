@@ -10,10 +10,15 @@ are not being changed because `comparator/*.json` pins some of them.
 
 ## Numbered paper results
 
-Every numbered result has a theorem surface, and since 2026-08-13 every one of
-them is stated at the printed generality:
+Every numbered result has a theorem surface.  They are not all at the same
+distance from the printed page — Theorem 2 and Corollary 1 are source-exact,
+Theorem 3 is a documented correction, and Theorem 1 and Lemma A1 are more general
+than printed:
 
-* Theorem 1, in unitarily invariant, Frobenius and operator-norm form;
+* Theorem 1, in unitarily invariant, Frobenius and operator-norm form — more
+  general than printed, and with an intrinsic separation rather than the printed
+  `δ`, whose endpoint conventions are inverted (census gap
+  `theorem1-sample-endpoint-conventions`);
 * Theorem 2, both conclusions, for **arbitrary ordered eigenframes** — the
   paper's `V̂` is any orthonormal family with `Σ̂ v̂ⱼ = λ̂ⱼ v̂ⱼ`, with no sample
   eigengap, so a repeated sample eigenvalue leaves it undetermined and the

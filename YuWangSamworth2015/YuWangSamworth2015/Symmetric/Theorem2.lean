@@ -276,15 +276,21 @@ theorem toOrderedBlockBoundaryGap
 
 end PopulationBoundaryGap
 
-/-- The source's exact population gap `Delta` for Theorem 2.
+/-- The source's population gap `Delta` for Theorem 2.
 
-For every non-full block, `Delta` is the greatest real number satisfying the two
-population boundary inequalities, hence exactly
-`min (lambda_(r-1) - lambda_r) (lambda_s - lambda_(s+1))` with the missing
-endpoint omitted.  For the full block `r = 0`, `s + 1 = p`, the first disjunct
-models the source convention that both exterior gaps are `+infinity`.  In that
-case every positive real `Delta` is an admissible finite lower surrogate, so the
-headline theorem is available for arbitrarily large `Delta`. -/
+For every non-full block the second disjunct says that `Delta` is the greatest
+real number satisfying the two population boundary inequalities, hence exactly
+`min (lambda_(r-1) - lambda_r) (lambda_s - lambda_(s+1))` with a missing endpoint
+omitted.  There `Delta` IS the source denominator, not a lower bound for it.
+
+The full block `r = 0`, `s + 1 = p` is the first disjunct, and is different in
+kind.  There are no exterior eigenvalues, the source conventions make both
+exterior gaps `+infinity`, and no greatest finite real satisfies the two vacuous
+clauses, so the second disjunct is unsatisfiable there.  In that case the
+selected frame spans the whole space and the sine distance is zero, so every
+positive finite `Delta` is an admissible surrogate for the infinite source
+denominator and the headline theorems hold for each of them.  The branch does not
+claim that a finite `Delta` is the source's `+infinity`. -/
 def SourcePopulationGap
     {p : Nat}
     (Sigma : EuclideanSpace Real (Fin p) →ₗ[Real] EuclideanSpace Real (Fin p))
@@ -294,10 +300,12 @@ def SourcePopulationGap
       ∀ delta : Real,
         PopulationBoundaryGap Sigma hSigma r s delta → delta ≤ Delta)
 
-/-- Characteristic form of the exact source-gap predicate.
+/-- Characteristic form of the source-gap predicate.
 
 Outside the full-space endpoint case, this says precisely that `Delta` is the
-largest common lower bound of the finite population boundary gaps. -/
+largest common lower bound of the finite population boundary gaps, which is the
+printed minimum.  In that endpoint case it says the block is the whole spectrum,
+where the printed gaps are both infinite. -/
 theorem sourcePopulationGap_iff
     {p : Nat}
     {Sigma : EuclideanSpace Real (Fin p) →ₗ[Real] EuclideanSpace Real (Fin p)}

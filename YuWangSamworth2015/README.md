@@ -14,10 +14,16 @@ on 2026-08-13): Theorem 1, Theorem 2, Corollary 1, Theorem 3, Lemma A1.  The
 and Lemma 5, which is what several Lean declaration names here still spell; the
 census carries the translation table.
 
-The package represents every numbered result in the paper, and since 2026-08-13
-each is stated at the printed generality:
+The package represents every numbered result in the paper.  They are not all at
+the same distance from the printed page, and the list below says which is which:
+Theorem 2 and Corollary 1 are source-exact, Theorem 3 is a documented correction
+of a false printed convention, and Theorem 1 and Lemma A1 are proved in forms more
+general than printed.
 
-1. Theorem 1 in general unitarily invariant, Frobenius, and operator norm form;
+1. Theorem 1 in general unitarily invariant, Frobenius, and operator norm form —
+   more general than printed, and with an intrinsic separation rather than the
+   printed `δ`, whose endpoint conventions are inverted (see the census gap
+   `theorem1-sample-endpoint-conventions`);
 2. Theorem 2 and its aligned-frame conclusion, for **arbitrary** orthonormal
    eigenframes at a common index block — no sample eigengap, which is the whole
    point of the paper — together with the sharper residual-numerator forms its

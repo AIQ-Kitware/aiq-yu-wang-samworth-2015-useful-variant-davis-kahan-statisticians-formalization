@@ -7,16 +7,6 @@
     "YWSPalomar.corollary1_sinTheta",
     "YWSPalomar.corollary1_alignedVector"
   ],
-  "definition_names": [
-    "YWSPalomar.Rp",
-    "YWSPalomar.IsEigenvectorBlock",
-    "YWSPalomar.PopulationBoundaryGap",
-    "YWSPalomar.SourcePopulationGap",
-    "YWSPalomar.frobeniusNorm",
-    "YWSPalomar.sinThetaDist",
-    "YWSPalomar.opNorm",
-    "YWSPalomar.perturbation"
-  ],
   "permitted_axioms": ["propext", "Quot.sound", "Classical.choice"],
   "enable_nanoda": true
 }

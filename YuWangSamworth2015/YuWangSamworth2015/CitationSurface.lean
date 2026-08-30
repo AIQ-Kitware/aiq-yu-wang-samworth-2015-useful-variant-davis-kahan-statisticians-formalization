@@ -15,14 +15,17 @@ shares one counter and calls the last three Corollary 3, Theorem 4 and Lemma 5,
 which several declaration names in this library still spell; the census carries
 the translation table.
 
-Every numbered result of the paper is represented, at the printed generality:
+Every numbered result of the paper is represented.  They are not all at the same
+distance from the printed page, and this list says which is which:
 
-1. classical Davis--Kahan Theorem 1;
+1. classical Davis--Kahan Theorem 1, in a form more general than printed and with
+   an intrinsic separation rather than the printed `delta`;
 2. population-gap Theorem 2 and its aligned-frame conclusion, for arbitrary
-   ordered eigenframes;
-3. rank-one Corollary 1, both displays;
-4. right and left singular-subspace Theorem 3, in its corrected form;
-5. Appendix Lemma A1.
+   ordered eigenframes, source-exact;
+3. rank-one Corollary 1, both displays, source-exact;
+4. right and left singular-subspace Theorem 3, in its corrected form -- the
+   printed rank-boundary convention is false;
+5. Appendix Lemma A1, in a form more general than printed.
 
 ## Finding the source-shaped statement
 
