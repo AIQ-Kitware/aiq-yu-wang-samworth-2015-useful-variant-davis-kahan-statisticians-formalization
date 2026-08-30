@@ -171,7 +171,7 @@ theorem theorem2_alignedFrame {p d r s : ℕ}
     (Delta : ℝ) (hDelta : 0 < Delta)
     (hgap : SourcePopulationGap Sigma hSigma r s Delta) :
     ∃ O ∈ Matrix.orthogonalGroup (Fin d) ℝ,
-      Real.sqrt (∑ i, ‖∑ j, O j i • Vhat j - V i‖ ^ 2) ≤
+      Real.sqrt (∑ i, ‖(∑ j, O j i • Vhat j) - V i‖ ^ 2) ≤
         2 * Real.sqrt 2 * perturbation d (SigmaHat - Sigma) / Delta := by
   rw [perturbation_eq]
   exact YuWangSamworth2015.theorem2_alignedFrame Sigma SigmaHat hSigma hSigmaHat hr hs hd

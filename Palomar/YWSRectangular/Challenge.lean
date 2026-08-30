@@ -214,7 +214,9 @@ theorem theorem3_rightSinTheta {p q d r s : ℕ}
 /-- **Theorem 3, right singular subspaces, aligned-frame conclusion.**
 
 An orthogonal `Ô ∈ O(d)` with `‖V̂Ô − V‖_F ≤ 2^{3/2} (2σ₁ + ‖D‖_op) min(…) / Δ`,
-compared against the supplied population frame `V`. -/
+compared against the supplied population frame `V`. The `i`-th column of `V̂Ô` is
+`∑ⱼ Ô_{ji} V̂ⱼ`, so the sum below is the whole rotated column and `V i` is
+subtracted from it once. -/
 theorem theorem3_rightAlignedFrame {p q d r s : ℕ}
     (A Ahat : Rn q →ₗ[ℝ] Rn p) (hr : r ≤ s)
     (hrank : s < finrank ℝ (LinearMap.range A)) (hd : d = s - r + 1)
@@ -224,7 +226,7 @@ theorem theorem3_rightAlignedFrame {p q d r s : ℕ}
     (Delta : ℝ) (hDelta : 0 < Delta)
     (hgap : SourceSingularGap q A r s Delta) :
     ∃ O ∈ Matrix.orthogonalGroup (Fin d) ℝ,
-      Real.sqrt (∑ i, ‖∑ j, O j i • Vhat j - V i‖ ^ 2) ≤
+      Real.sqrt (∑ i, ‖(∑ j, O j i • Vhat j) - V i‖ ^ 2) ≤
         2 * Real.sqrt 2 * coefficient d A (Ahat - A) / Delta := by
   sorry
 
@@ -240,7 +242,8 @@ theorem theorem3_leftSinTheta {p q d r s : ℕ}
     sinThetaDist U Uhat ≤ 2 * coefficient d A (Ahat - A) / Delta := by
   sorry
 
-/-- **Theorem 3, left singular subspaces, aligned-frame conclusion.** -/
+/-- **Theorem 3, left singular subspaces, aligned-frame conclusion**, read the
+same way: the `i`-th column of `ÛÔ` is `∑ⱼ Ô_{ji} Ûⱼ`. -/
 theorem theorem3_leftAlignedFrame {p q d r s : ℕ}
     (A Ahat : Rn q →ₗ[ℝ] Rn p) (hr : r ≤ s)
     (hrank : s < finrank ℝ (LinearMap.range A)) (hd : d = s - r + 1)
@@ -250,7 +253,7 @@ theorem theorem3_leftAlignedFrame {p q d r s : ℕ}
     (Delta : ℝ) (hDelta : 0 < Delta)
     (hgap : SourceSingularGap p A r s Delta) :
     ∃ O ∈ Matrix.orthogonalGroup (Fin d) ℝ,
-      Real.sqrt (∑ i, ‖∑ j, O j i • Uhat j - U i‖ ^ 2) ≤
+      Real.sqrt (∑ i, ‖(∑ j, O j i • Uhat j) - U i‖ ^ 2) ≤
         2 * Real.sqrt 2 * coefficient d A (Ahat - A) / Delta := by
   sorry
 

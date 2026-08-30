@@ -183,7 +183,7 @@ theorem theorem3_rightAlignedFrame {p q d r s : ℕ}
     (Delta : ℝ) (hDelta : 0 < Delta)
     (hgap : SourceSingularGap q A r s Delta) :
     ∃ O ∈ Matrix.orthogonalGroup (Fin d) ℝ,
-      Real.sqrt (∑ i, ‖∑ j, O j i • Vhat j - V i‖ ^ 2) ≤
+      Real.sqrt (∑ i, ‖(∑ j, O j i • Vhat j) - V i‖ ^ 2) ≤
         2 * Real.sqrt 2 * coefficient d A (Ahat - A) / Delta := by
   obtain ⟨O, hO, hbound⟩ := YuWangSamworth2015.theorem3_rightAlignedFrame A Ahat hr hrank hd
     V Vhat hV hVhat Delta hDelta hgap
@@ -213,7 +213,7 @@ theorem theorem3_leftAlignedFrame {p q d r s : ℕ}
     (Delta : ℝ) (hDelta : 0 < Delta)
     (hgap : SourceSingularGap p A r s Delta) :
     ∃ O ∈ Matrix.orthogonalGroup (Fin d) ℝ,
-      Real.sqrt (∑ i, ‖∑ j, O j i • Uhat j - U i‖ ^ 2) ≤
+      Real.sqrt (∑ i, ‖(∑ j, O j i • Uhat j) - U i‖ ^ 2) ≤
         2 * Real.sqrt 2 * coefficient d A (Ahat - A) / Delta := by
   obtain ⟨O, hO, hbound⟩ := YuWangSamworth2015.theorem3_leftAlignedFrame A Ahat hr hrank hd
     U Uhat hU hUhat Delta hDelta hgap
