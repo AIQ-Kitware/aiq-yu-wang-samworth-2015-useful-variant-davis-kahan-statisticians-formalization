@@ -115,10 +115,14 @@ sources:
     repository-wide one, and it is `formalizes` because most of the paper is
     formalized at its printed statement; it is not the relationship of every
     individual result, and a Palomar submission should select the per-entry
-    metadata instead. Precisely: Theorem 2 and Corollary 1 are formalized and
+    metadata instead. Precisely: Theorem 2's two conclusions are formalized and
     compared at the printed statement, with no added hypothesis and no weakened
-    conclusion -- that is `registry/yws-symmetric`, whose metadata records
-    `formalizes`. Theorem 3 is compared in a corrected form, because its printed
+    conclusion, and Corollary 1's two displays are compared with the unit
+    normalization inherited from its d = 1 derivation from Theorem 2 written out,
+    which the standalone printed display omits and without which its second
+    display is false -- together those are `registry/yws-symmetric`, whose
+    metadata records `formalizes` and describes the entry as source-faithful
+    rather than exact. Theorem 3 is compared in a corrected form, because its printed
     rank-boundary convention is false and is refuted here; that is
     `registry/yws-rectangular`, whose metadata records `adapts`. Theorem 1 and
     Appendix Lemma A1 are formalized here but are not compared by any Comparator

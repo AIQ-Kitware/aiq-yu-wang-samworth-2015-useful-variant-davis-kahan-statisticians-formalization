@@ -710,9 +710,10 @@ private theorem exists_unit_smul_eq_of_mem_span_singleton
 /-- Rank-one/sign-aligned eigenvector corollary for a canonically indexed eigenline.
 
 The `hcorr` premise selects `v` from the corresponding ordered perturbed eigenline rather than
-from an arbitrary eigenvector of `B`, so this is narrower than Corollary 1 as printed.  The
-printed statement is `yuWangSamworth_eigenvector_frame_sinTheta_le` together with
-`yuWangSamworth_eigenvector_real_le`.
+from an arbitrary eigenvector of `B`, so this is narrower than Corollary 1.  The source-faithful
+statements are `yuWangSamworth_eigenvector_frame_sinTheta_le` together with
+`yuWangSamworth_eigenvector_real_le`, which are the printed displays with the normalization the
+standalone printed corollary omits written out.
 
 Related formalization: `facebookresearch/atlas-lean`,
 `Atlas/HighDimensionalStatistics/code/Chapter4/Thm_4_8.lean`, contains a
@@ -790,9 +791,14 @@ theorem yuWangSamworth_eigenvector_le
 /-! ### Corollary 1: the single-eigenvector case at the printed generality
 
 Yu, Wang and Samworth state the `d = 1` case separately because it is the one
-most applications need.  Their hypotheses are exactly `Σ v = λⱼ v` and
-`Σ̂ v̂ = λ̂ⱼ v̂` for *some* unit vectors — no sample gap, and no claim that `v̂` is
-any particular eigenvector when `λ̂ⱼ` is repeated.
+most applications need.  Their printed hypotheses are `Σ v = λⱼ v` and
+`Σ̂ v̂ = λ̂ⱼ v̂` for *some* vectors — no sample gap, and no claim that `v̂` is any
+particular eigenvector when `λ̂ⱼ` is repeated.
+
+The statements below add `‖v‖ = ‖v̂‖ = 1`, which the standalone printed display
+omits and the corollary inherits from its derivation as the `d = 1` case of
+Theorem 2.  That is not optional: see
+`YuWangSamworth2015.corollary1_printed_unnormalized_counterexample`.
 -/
 
 omit [FiniteDimensional 𝕜 E] in
@@ -847,8 +853,8 @@ theorem yuWangSamworth_eigenvector_frame_sinTheta_le
 /-- **Corollary 1, second display, at the printed generality** — up to the
 orientation choice.  Over `ℝ` the unit scalar `c` is `±1`, which is exactly the
 sign the paper fixes by requiring `v̂ᵀ v ≥ 0`; over `ℂ` a phase is the honest
-generalization.  See `yuWangSamworth_eigenvector_real_le` for the literal
-printed real statement. -/
+generalization.  See `yuWangSamworth_eigenvector_real_le` for the real form,
+which is the printed display with the inherited normalization written out. -/
 theorem yuWangSamworth_eigenvector_frame_le
     {A B : E →ₗ[𝕜] E} {hA : A.IsSymmetric} {hB : B.IsSymmetric}
     {n : ℕ} {hn : finrank 𝕜 E = n} {j : Fin n} {u v : E}
@@ -1037,7 +1043,13 @@ private theorem norm_sub_le_norm_smul_sub {u v : F} {c : ℝ}
   have h := Real.sqrt_le_sqrt hsq
   rwa [Real.sqrt_sq (norm_nonneg _), Real.sqrt_sq (norm_nonneg _)] at h
 
-/-- **Yu--Wang--Samworth Corollary 1, exactly as printed.**
+/-- **Yu--Wang--Samworth Corollary 1, the source-faithful `d = 1`
+specialization.**
+
+Not "exactly as printed": the standalone printed corollary omits `‖v‖ = ‖v̂‖ = 1`,
+which it inherits from its derivation as the `d = 1` case of Theorem 2, and its
+second display is false without it.  See
+`YuWangSamworth2015.corollary1_printed_unnormalized_counterexample`.
 
 Real symmetric `Σ`, `Σ̂`; a population separation
 `Δⱼ = min(λ_{j-1} − λⱼ, λⱼ − λ_{j+1}) > 0` and *no* sample separation; `v`, `v̂`

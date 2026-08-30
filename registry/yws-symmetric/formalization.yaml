@@ -80,10 +80,15 @@ sources:
       Published Biometrika numbering; the 2014 arXiv preprint numbers the same
       results differently and states Theorem 1's exterior rays with different
       indices. The four compared declarations are Theorem 2's two conclusions and
-      Corollary 1's two displays, at the printed statement: no added hypothesis,
-      no weakened conclusion, no sample eigengap, arbitrary admissible sample
-      eigenframe, the printed constants 2 and 2^(3/2), and the printed
-      denominator identified rather than bounded below (see the Challenge
+      Corollary 1's two displays. Theorem 2's two conclusions are at the printed
+      statement with no added hypothesis and no weakened conclusion. Corollary 1's
+      two displays make explicit the unit normalization inherited from its
+      derivation as the d = 1 case of Theorem 2, which the standalone printed
+      display omits; that is the only place where these four statements are not
+      verbatim the printed ones, and it is spelled out below. All four have no
+      sample eigengap, an arbitrary admissible sample eigenframe, the printed
+      constants 2 and 2^(3/2), and the printed denominator identified rather than
+      bounded below (see the Challenge
       docstring for the full-block endpoint case, which is the one place where a
       positive finite Delta stands in for the source's infinite gap).
 

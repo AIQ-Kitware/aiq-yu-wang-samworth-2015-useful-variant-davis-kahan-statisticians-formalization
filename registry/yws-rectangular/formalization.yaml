@@ -5,7 +5,8 @@
 # One Palomar entry is one Comparator configuration. This file describes the
 # rectangular Yu-Wang-Samworth selection -- Theorem 3 -- whose relationship to
 # the source is `adapts`, because one printed convention of that theorem is false
-# and is replaced. The symmetric Theorem 2 / Corollary 1 entry is source-exact
+# and is replaced. The symmetric Theorem 2 / Corollary 1 entry is source-faithful
+# -- Theorem 2 exact, Corollary 1 with an inherited hypothesis made explicit --
 # and carries its own metadata beside its own configuration.
 version: "v0.4"
 
@@ -84,7 +85,10 @@ project:
     2 sharpness constructions, the Section 1 numerical illustration and the
     deterministic content of the Section 3 audit, and machine-checks a second
     printed defect, in Equation (4). Theorem 2 and Corollary 1 are a separate
-    Palomar entry, with its own metadata, and are source-exact.
+    Palomar entry, with its own metadata, and are source-faithful: Theorem 2 is
+    exact, and Corollary 1 makes explicit the unit normalization inherited from
+    its d = 1 derivation from Theorem 2, which the standalone printed display
+    omits.
   authors:
     - "Jon Crall"
     - "Edward Wang"

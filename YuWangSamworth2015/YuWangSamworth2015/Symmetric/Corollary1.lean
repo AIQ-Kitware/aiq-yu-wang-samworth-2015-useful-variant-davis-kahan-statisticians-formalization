@@ -18,7 +18,16 @@ assumes only
 
 with `λ_0 = +∞` and `λ_{p+1} = −∞`.  For a sorted spectrum the two are the same
 condition, and `YuWangSamworth2015.OrderedBlockBoundaryGap.gap_of_singleton` is the
-implication; this module records the corollary as printed.
+implication; this module records the corollary at the source's own gap.
+
+**Not "as printed", in one respect.**  The standalone printed corollary does not
+say that `v` and `v̂` are unit vectors — it says only that they satisfy the two
+eigenvector equations.  Unit vectors are what it inherits, since the paper
+introduces it as the `d = 1` case of Theorem 2, whose frames have orthonormal
+columns; but the inheritance cannot be dropped, because the printed second
+display is false without it.
+`corollary1_printed_unnormalized_counterexample` at the end of this module is the
+machine-checked refutation.
 
 ## Sample degeneracy
 
@@ -45,7 +54,11 @@ variable {𝕜 : Type*} [RCLike 𝕜]
 variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace 𝕜 E]
   [FiniteDimensional 𝕜 E]
 
-/-- **Corollary 1, first display, exactly as printed.**
+/-- **Corollary 1, first display, as the source-faithful `d = 1` specialization.**
+
+Not "exactly as printed": the standalone printed display omits `‖v‖ = ‖v̂‖ = 1`,
+which the corollary inherits from its derivation as the `d = 1` case of Theorem 2.
+See `corollary1_printed_unnormalized_counterexample`.
 
 `sin Θ(v̂ⱼ, vⱼ) ≤ 2 ‖Σ̂ − Σ‖_op / Δⱼ` for arbitrary unit eigenvectors of `Σ` and
 `Σ̂` at the `j`-th sorted eigenvalue, assuming only the population separation
@@ -70,7 +83,10 @@ section Real
 variable {F : Type*} [NormedAddCommGroup F] [InnerProductSpace ℝ F]
   [FiniteDimensional ℝ F]
 
-/-- **Corollary 1, second display, exactly as printed.**
+/-- **Corollary 1, second display, as the source-faithful `d = 1` specialization.**
+
+Not "exactly as printed": without the inherited `‖v‖ = ‖v̂‖ = 1` this display is
+false, and `corollary1_printed_unnormalized_counterexample` refutes it.
 
 Real symmetric `Σ`, `Σ̂`; unit eigenvectors `v`, `v̂` at the `j`-th sorted
 eigenvalues; the orientation `v̂ᵀ v ≥ 0`; the population separation
