@@ -16,9 +16,10 @@ census carries the translation table.
 
 The package represents every numbered result in the paper.  They are not all at
 the same distance from the printed page, and the list below says which is which:
-Theorem 2 and Corollary 1 are source-exact, Theorem 3 is a documented correction
-of a false printed convention, and Theorem 1 and Lemma A1 are proved in forms more
-general than printed.
+Theorem 2 is source-exact; Corollary 1 writes out the unit normalization the
+standalone printed display omits, without which that display is false; Theorem 3
+is a documented correction of a false printed convention; and Theorem 1 and
+Lemma A1 are proved in forms more general than printed.
 
 1. Theorem 1 in general unitarily invariant, Frobenius, and operator norm form —
    more general than printed, and with an intrinsic separation rather than the
@@ -28,7 +29,10 @@ general than printed.
    eigenframes at a common index block — no sample eigengap, which is the whole
    point of the paper — together with the sharper residual-numerator forms its
    proof establishes;
-3. Corollary 1, both displays, including the literal real sign-aligned bound;
+3. Corollary 1, both displays, including the literal real sign-aligned bound,
+   with `‖v‖ = ‖v̂‖ = 1` written out — the standalone printed display omits it and
+   its second half is false without it, which
+   `corollary1_printed_unnormalized_counterexample` refutes;
 4. Theorem 3, right and left, including aligned frames, in its corrected form,
    and in the paper's own singular-value notation;
 5. Lemma A1 in a basis-free compression API;

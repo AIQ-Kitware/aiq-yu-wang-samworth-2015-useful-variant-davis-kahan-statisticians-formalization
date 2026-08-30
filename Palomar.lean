@@ -9,4 +9,8 @@
 -- The lakefile's `globs = ["Palomar.*"]` is authoritative for what gets built, so
 -- every module compiles without anything importing it here.
 --
--- See palomar/README.md and dev/palomar-readiness.md.
+-- The configuration and metadata live under `registry/`, not `palomar/`: a
+-- directory differing from this one only in case is the same directory on a
+-- case-insensitive filesystem.
+--
+-- See registry/README.md.

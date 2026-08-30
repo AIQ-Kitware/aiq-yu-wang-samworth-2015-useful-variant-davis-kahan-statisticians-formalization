@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/mathlib-initiative/formalization.yaml/main/schema/formalization.schema.json
 #
-# Palomar entry metadata for `palomar/yws-rectangular/comparator.json`.
+# Palomar entry metadata for `registry/yws-rectangular/comparator.json`.
 #
 # One Palomar entry is one Comparator configuration. This file describes the
 # rectangular Yu-Wang-Samworth selection -- Theorem 3 -- whose relationship to
@@ -125,7 +125,7 @@ sources:
       singular-value gap, the numerator (2 sigma_1 + ||D||_op) min(sqrt(d)
       ||D||_op, ||D||_F), and the constants 2 and 2^(3/2) -- is the printed
       content. This entry must not be described as exact. The clause-by-clause
-      basis is `palomar/YWS_SOURCE_CONTRACT.md` in the repository.
+      basis is `registry/YWS_SOURCE_CONTRACT.md` in the repository.
     author_endorsement: "not-contacted"
 
 status:
@@ -135,7 +135,7 @@ status:
     described above; and the two equivalences between the Gram-eigenvector form
     of a singular block and the paper's printed singular-vector equations. Not
     compared here, and not claimed by this entry: Theorem 1, Theorem 2, Corollary
-    1, Appendix Lemma A1, the sharpness constructions and the two source-defect
+    1, Appendix Lemma A1, the sharpness constructions and the three source-defect
     refutations, all of which are formalized in the repository. Theorem 2 and
     Corollary 1 are the subject of a separate Comparator configuration and a
     separate Palomar entry.
@@ -185,9 +185,14 @@ automation:
       tool_setup: >-
         Agents worked directly in the repository with the Lean toolchain, running
         `lake build` and the repository's own gate suite. Model attribution is
-        recorded per commit in Co-Authored-By trailers and per declaration in
-        module provenance headers. The checked-in resource ledger attributes
-        42178 assistant turns over 1721 accounted sessions to this framework.
+        recorded per commit in Co-Authored-By trailers and per declaration in the
+        Mathlib-style `Authors:` module headers, which are a provenance record and
+        name the models that produced a file alongside the humans who directed it.
+        They are deliberately not a claim of authorship in the `project.authors`
+        sense: this metadata is the authorship record, models appear here under
+        automation, and only people appear under `project.authors`. The checked-in
+        resource ledger attributes 42178 assistant turns over 1721 accounted
+        sessions to this framework.
     - method: "agent"
       models:
         - "gpt-5.6-terra"
@@ -232,10 +237,15 @@ fidelity:
     sound because the selected frame then spans everything and the sine distance
     is zero.
 
-    A second defect in the printed paper, unrelated to this entry, is
-    machine-checked elsewhere in the repository: printed Equation (4) omits a
-    square on the factor (2 - ||v-hat - v||^2) and is refuted as printed at inner
-    product 3/5.
+    Three further defects in the printed paper, unrelated to this entry, are
+    machine-checked or documented elsewhere in the repository: printed Equation
+    (4) omits a square on the factor (2 - ||v-hat - v||^2) and is refuted as
+    printed at inner product 3/5; the standalone printed Corollary 1 omits the
+    unit normalization its own d = 1 reading supplies, without which its second
+    display is false, and that too is refuted; and Theorem 1's printed
+    conventions lambda-hat_0 = -infinity, lambda-hat_{p+1} = +infinity invert its
+    exterior rays and make it vacuous at any block touching an end of the
+    spectrum.
 
 review:
   status: "self-assessed"

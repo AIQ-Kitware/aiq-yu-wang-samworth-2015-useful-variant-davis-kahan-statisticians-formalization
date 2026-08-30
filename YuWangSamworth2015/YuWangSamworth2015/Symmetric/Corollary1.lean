@@ -327,6 +327,64 @@ theorem corollary1_alignedVector
     (j := ⟨j, hj⟩) hv hvHat hSv hShv hsign hDelta
     (hgap.toPopulationBoundaryGap.toOrderedBlockBoundaryGap)
 
+/-- **The printed Corollary 1 omits the normalization its own `d = 1` reading
+supplies, and without it the second display is false.**
+
+Yu, Wang and Samworth introduce Corollary 1 as the `r = s = j` case of Theorem 2,
+whose `V` and `V-hat` have orthonormal columns, so unit vectors are plainly what
+is meant.  The standalone printed statement nevertheless says only "if `v, vHat`
+in `R^p` satisfy `Sigma v = lambda_j v` and `SigmaHat vHat = lambdaHat_j vHat`",
+and that is not enough.  Scaling `vHat` preserves every printed hypothesis --
+the eigenvector equation is homogeneous, and the orientation condition
+`vHat^T v >= 0` only becomes more true -- while `||vHat - v||` does not.
+
+Concretely, from any instance of the normalized corollary, take `SigmaHat :=
+Sigma` and `vHat := 2 v`.  The printed sample eigenvector equation and the
+printed orientation condition both hold, the perturbation is zero, so the
+printed bound `2^(3/2) ||SigmaHat - Sigma||_op / Delta` is `0` -- and
+`||2 v - v|| = ||v|| = 1` exceeds it.
+
+The gap hypothesis is carried through unused.  It constrains `Sigma` alone, so
+this counterexample satisfies it whenever the instance it is built from does;
+the printed hypotheses are therefore jointly satisfiable and the refutation is
+not vacuous.
+
+`corollary1_sinTheta` and `corollary1_alignedVector` above are the repaired
+statements, with the inherited normalization written out.  Note that only the
+second display fails outright: the printed first display is about the angle
+between the two spans, which scaling does not move, though it is degenerate at
+`vHat = 0`, which the printed hypotheses also admit.
+
+`_hDelta` and `_hgap` carry the leading underscore Lean's unused-variable linter
+asks for.  They are the source's own hypotheses and are kept in the signature for
+correspondence, not because the refutation needs them. -/
+theorem corollary1_printed_unnormalized_counterexample
+    {p j : Nat}
+    (Sigma : EuclideanSpace Real (Fin p) →ₗ[Real] EuclideanSpace Real (Fin p))
+    (hSigma : Sigma.IsSymmetric)
+    (hj : j < p) (v : EuclideanSpace Real (Fin p)) (hv : ‖v‖ = 1)
+    (hSv : Sigma v =
+      hSigma.eigenvalues
+        (show finrank Real (EuclideanSpace Real (Fin p)) = p by simp) ⟨j, hj⟩ • v)
+    (Delta : Real) (_hDelta : 0 < Delta)
+    (_hgap : SourcePopulationGap Sigma hSigma j j Delta) :
+    Sigma ((2 : Real) • v) =
+        hSigma.eigenvalues
+          (show finrank Real (EuclideanSpace Real (Fin p)) = p by simp) ⟨j, hj⟩
+          • ((2 : Real) • v) ∧
+      0 ≤ inner Real ((2 : Real) • v) v ∧
+      2 * Real.sqrt 2 * ‖Sigma - Sigma‖_op / Delta < ‖(2 : Real) • v - v‖ := by
+  refine ⟨?_, ?_, ?_⟩
+  · rw [map_smul, hSv, smul_comm]
+  · rw [real_inner_smul_left, real_inner_self_eq_norm_sq, hv]
+    norm_num
+  · have hvv : ((2 : Real) • v - v) = v := by
+      rw [two_smul]
+      abel
+    have hzero : Sigma - Sigma = 0 := sub_self _
+    rw [hvv, hv, hzero]
+    simp
+
 end PaperFacing
 
 end YuWangSamworth2015

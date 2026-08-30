@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/mathlib-initiative/formalization.yaml/main/schema/formalization.schema.json
 #
-# Palomar entry metadata for `palomar/yws-symmetric/comparator.json`.
+# Palomar entry metadata for `registry/yws-symmetric/comparator.json`.
 #
 # One Palomar entry is one Comparator configuration, so this file describes the
 # symmetric Yu-Wang-Samworth selection -- Theorem 2 and Corollary 1 -- and not
@@ -51,7 +51,7 @@ project:
     paper's Theorem 1, its Theorem 3 for singular subspaces of rectangular
     matrices, Appendix Lemma A1, both Section 2 sharpness constructions, the
     Section 1 numerical illustration and the deterministic content of the Section
-    3 audit, and machine-checks two defects in the printed paper. Those are not
+    3 audit, and machine-checks three defects in the printed paper. Those are not
     part of this Comparator configuration; the Theorem 3 selection is a separate
     Palomar entry with its own metadata.
   authors:
@@ -85,17 +85,32 @@ sources:
       eigenframe, the printed constants 2 and 2^(3/2), and the printed
       denominator identified rather than bounded below (see the Challenge
       docstring for the full-block endpoint case, which is the one place where a
-      positive finite Delta stands in for the source's infinite gap). The
-      clause-by-clause basis is `palomar/YWS_SOURCE_CONTRACT.md` in the
+      positive finite Delta stands in for the source's infinite gap).
+
+      One qualification, and it is the reason the word "exact" is not used for
+      this entry as a whole. Corollary 1's two declarations assume ||v|| = 1 and
+      ||vHat|| = 1, and the STANDALONE printed Corollary 1 does not say that: it
+      writes only "if v, vHat in R^p satisfy Sigma v = lambda_j v and SigmaHat
+      vHat = lambdaHat_j vHat". Unit vectors are unambiguously what is meant --
+      the corollary is introduced as the d = 1 case of Theorem 2, whose V and
+      VHat have orthonormal columns -- but the omission is not harmless: the
+      second display is false as literally printed, and this repository carries a
+      machine-checked refutation of it. `formalizes` is nevertheless the accurate
+      relationship: what is written out is a hypothesis the source itself
+      supplies one sentence earlier, not a change to the result. Theorem 2 needs
+      no such qualification.
+
+      The clause-by-clause basis is `registry/YWS_SOURCE_CONTRACT.md` in the
       repository.
     author_endorsement: "not-contacted"
 
 status:
   scope: >-
     Compared by this Comparator configuration: Theorem 2, both printed
-    conclusions, and Corollary 1, both printed displays. Not compared here, and
+    conclusions, and Corollary 1, both printed displays, the latter with the unit
+    normalization the standalone printed display omits written out. Not compared here, and
     not claimed by this entry: Theorem 1, Theorem 3, Appendix Lemma A1, the
-    sharpness constructions and the two source-defect refutations, all of which
+    sharpness constructions and the three source-defect refutations, all of which
     are formalized in the repository. Theorem 3 is the subject of a separate
     Comparator configuration and a separate Palomar entry.
 
@@ -117,20 +132,24 @@ status:
       statement: >-
         Theorem 2, first conclusion: the Frobenius sin-Theta distance between the
         population and sample eigenspaces of the block r..s is at most
-        2 min(sqrt(d) ||E||_op, ||E||_F) / Delta.
+        2 min(sqrt(d) ||E||_op, ||E||_F) / Delta. The printed statement.
     - name: "YWSPalomar.theorem2_alignedFrame"
       statement: >-
         Theorem 2, second conclusion: some orthogonal d-by-d matrix O-hat
         satisfies ||V-hat O-hat - V||_F <= 2^(3/2) min(sqrt(d) ||E||_op, ||E||_F)
-        / Delta, against the supplied population frame.
+        / Delta, against the supplied population frame. The printed statement.
     - name: "YWSPalomar.corollary1_sinTheta"
       statement: >-
         Corollary 1, first display: the rank-one case, sin Theta(v-hat, v) <=
-        2 ||E||_op / Delta_j with Delta_j the neighbouring population gap.
+        2 ||E||_op / Delta_j with Delta_j the neighbouring population gap, with
+        the unit normalization the standalone printed display omits made
+        explicit.
     - name: "YWSPalomar.corollary1_alignedVector"
       statement: >-
         Corollary 1, second display: under the printed orientation condition
-        <v-hat, v> >= 0, ||v-hat - v|| <= 2^(3/2) ||E||_op / Delta_j.
+        <v-hat, v> >= 0, ||v-hat - v|| <= 2^(3/2) ||E||_op / Delta_j, with the
+        unit normalization made explicit. Without it the printed display is
+        false, and the repository refutes it.
 
 automation:
   methods:
@@ -143,9 +162,14 @@ automation:
       tool_setup: >-
         Agents worked directly in the repository with the Lean toolchain, running
         `lake build` and the repository's own gate suite. Model attribution is
-        recorded per commit in Co-Authored-By trailers and per declaration in
-        module provenance headers. The checked-in resource ledger attributes
-        42178 assistant turns over 1721 accounted sessions to this framework.
+        recorded per commit in Co-Authored-By trailers and per declaration in the
+        Mathlib-style `Authors:` module headers, which are a provenance record and
+        name the models that produced a file alongside the humans who directed it.
+        They are deliberately not a claim of authorship in the `project.authors`
+        sense: this metadata is the authorship record, models appear here under
+        automation, and only people appear under `project.authors`. The checked-in
+        resource ledger attributes 42178 assistant turns over 1721 accounted
+        sessions to this framework.
     - method: "agent"
       models:
         - "gpt-5.6-terra"
@@ -172,23 +196,41 @@ automation:
 
 fidelity:
   divergences: >-
-    None in the four compared statements: they are the printed ones, with no
-    added hypothesis and no weakened conclusion. Two qualifications a reader
-    should have. First, Lean indices are zero-based, so the paper's block
-    1 <= r <= s <= p appears as r <= s and s < p. Second, for the full block
-    r = 1, s = p the paper's conventions lambda_0 = +infinity and lambda_{p+1} =
-    -infinity make both exterior gaps infinite; the exact-gap predicate records
-    that as a separate branch in which any positive finite Delta is accepted,
-    which is sound because the selected frame then spans the whole space and the
-    sine distance is zero. Outside that case the predicate identifies Delta with
-    the printed minimum.
+    Theorem 2's two compared statements are the printed ones, with no added
+    hypothesis and no weakened conclusion.
 
-    Two defects in the printed paper are machine-checked elsewhere in the
-    repository and are not part of this entry: printed Equation (4) omits a
-    square on the factor (2 - ||v-hat - v||^2) and is refuted as printed at inner
-    product 3/5, and Theorem 3's printed convention sigma^2_{rank(A)+1} :=
-    -infinity is false at the rank boundary. The Theorem 3 entry discloses the
-    second and is labelled as adapting the source.
+    Corollary 1's two compared statements add ||v|| = 1 and ||v-hat|| = 1, which
+    the standalone printed display omits. The paper introduces Corollary 1 as the
+    d = 1 case of Theorem 2, whose frames have orthonormal columns, so this is a
+    hypothesis the source supplies one sentence earlier rather than a new one;
+    but it cannot simply be dropped, because the second printed display is false
+    without it. Scaling v-hat preserves every printed hypothesis -- the
+    eigenvector equation is homogeneous and v-hat^T v >= 0 only becomes more true
+    -- so with SigmaHat = Sigma and v-hat = 2v the perturbation is zero, the
+    printed bound is 0, and ||v-hat - v|| = ||v||. That is machine-checked as
+    `YuWangSamworth2015.corollary1_printed_unnormalized_counterexample`. The
+    printed first display survives scaling, being about the angle between two
+    spans, though it is degenerate at v-hat = 0, which the printed hypotheses
+    also admit.
+
+    Two further qualifications a reader should have. Lean indices are zero-based,
+    so the paper's block 1 <= r <= s <= p appears as r <= s and s < p. And for
+    the full block r = 1, s = p the paper's conventions lambda_0 = +infinity and
+    lambda_{p+1} = -infinity make both exterior gaps infinite; the exact-gap
+    predicate records that as a separate branch in which any positive finite
+    Delta is accepted, which is sound because the selected frame then spans the
+    whole space and the sine distance is zero. Outside that case the predicate
+    identifies Delta with the printed minimum.
+
+    Three defects in the printed paper are machine-checked or documented
+    elsewhere in the repository and are not part of this entry: printed Equation
+    (4) omits a square on the factor (2 - ||v-hat - v||^2) and is refuted as
+    printed at inner product 3/5; Theorem 3's printed convention
+    sigma^2_{rank(A)+1} := -infinity is false at the rank boundary, which the
+    separate Theorem 3 entry discloses and which makes that entry an adaptation;
+    and Theorem 1's printed conventions lambda-hat_0 = -infinity,
+    lambda-hat_{p+1} = +infinity invert its exterior rays and make it vacuous at
+    any block touching an end of the spectrum.
 
 review:
   status: "self-assessed"

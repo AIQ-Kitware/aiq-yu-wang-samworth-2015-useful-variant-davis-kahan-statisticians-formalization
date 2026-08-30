@@ -32,12 +32,12 @@ the Lean variables.
 
 | entry | comparator config | metadata | compared | source relationship |
 | --- | --- | --- | --- | --- |
-| symmetric | `palomar/yws-symmetric/comparator.json` | `palomar/yws-symmetric/formalization.yaml` | Theorem 2 (both conclusions), Corollary 1 (both displays) | `formalizes` — **exact** |
-| rectangular | `palomar/yws-rectangular/comparator.json` | `palomar/yws-rectangular/formalization.yaml` | Theorem 3 (right/left × sine/aligned), plus the two singular-frame equivalences | `adapts` — **source-corrected** |
+| symmetric | `registry/yws-symmetric/comparator.json` | `registry/yws-symmetric/formalization.yaml` | Theorem 2 (both conclusions), Corollary 1 (both displays) | `formalizes` — **source-faithful**: Theorem 2 exact, Corollary 1 with one inherited hypothesis written out |
+| rectangular | `registry/yws-rectangular/comparator.json` | `registry/yws-rectangular/formalization.yaml` | Theorem 3 (right/left × sine/aligned), plus the two singular-frame equivalences | `adapts` — **source-corrected** |
 
 Not compared by either entry: Theorem 1, Appendix Lemma A1, the two Section 2
 sharpness constructions, the Section 1 numerical illustration, the Section 3
-audit content, and the two source-defect refutations. All are formalized in the
+audit content, and the three source-defect refutations. All are formalized in the
 development; see the rows below for Theorem 1 and Lemma A1.
 
 ---
@@ -83,14 +83,14 @@ Hypotheses identical to T2-1.
 | source one-based block | `j ∈ {1, …, p}`, `d = 1` | — |
 | Challenge zero-based block | — | `hj : j < p`, single index ✓ |
 | source rank restriction | none | none ✓ |
-| vectors | `v, v̂` with `Σ v = λ_j v`, `Σ̂ v̂ = λ̂_j v̂`; unit, as the `d = 1` case of Theorem 2 | `hv : ‖v‖ = 1`, `hvHat : ‖vHat‖ = 1`, the two eigenvector equations ✓ |
+| vectors | `v, v̂` with `Σ v = λ_j v`, `Σ̂ v̂ = λ̂_j v̂`. **The standalone printed display does not say they are unit vectors**; the sentence introducing the corollary does, by presenting it as the `d = 1` case of Theorem 2 | `hv : ‖v‖ = 1`, `hvHat : ‖vHat‖ = 1`, the two eigenvector equations — the inherited hypothesis written out, see the note below |
 | arbitrary-frame status | `v̂` **arbitrary** at a repeated sample eigenvalue | arbitrary ✓ |
 | sample-gap status | none | none ✓ |
 | exact denominator | `Δ_j = min(λ_{j−1} − λ_j, λ_j − λ_{j+1})` | `SourcePopulationGap Sigma hSigma j j Delta` — identified, not bounded below ✓ |
 | endpoint convention | `λ₀ = +∞`, `λ_{p+1} = −∞` | as in T2-1; the `p = 1` case is the full-block disjunct ✓ |
 | numerator and constant | `2 ‖E‖_op` | `2 * opNorm (SigmaHat - Sigma)` ✓ |
 | conclusion | `sin Θ(v̂, v)` | `‖P_{span{v̂}^⊥} v‖`, the length of the component of `v` orthogonal to `v̂` ✓ |
-| source disposition | — | **exact** |
+| source disposition | — | **source-faithful, with one inherited hypothesis explicit** |
 | production theorem used by Solution | — | `YuWangSamworth2015.corollary1_sinTheta` |
 
 ## Row C1-2 — Corollary 1, second display
@@ -103,8 +103,34 @@ Hypotheses as C1-1 plus the printed orientation condition.
 | orientation | `v̂ᵀv ≥ 0` | `hsign : 0 ≤ inner ℝ vHat v` ✓ |
 | numerator and constant | `2^{3/2} ‖E‖_op` | `2 * Real.sqrt 2 * opNorm (SigmaHat - Sigma)` ✓ |
 | conclusion | `‖v̂ − v‖` | `‖vHat - v‖` ✓ |
-| source disposition | — | **exact** |
+| source disposition | — | **source-faithful, with one inherited hypothesis explicit**; without it this display is false |
 | production theorem used by Solution | — | `YuWangSamworth2015.corollary1_alignedVector` |
+
+### The normalization, and why it cannot simply be dropped
+
+The paper writes, immediately before the corollary: *"Many if not most
+applications of this result will need only `s = r`, i.e., `d = 1`. In that case,
+the statement simplifies a little; for ease of reference, we state it as a
+corollary."* Theorem 2's `V` and `V̂` have orthonormal columns, so unit vectors
+are what the corollary inherits and unambiguously means. The standalone display
+nevertheless says only "if `v, v̂ ∈ ℝ^p` satisfy `Σ v = λ_j v` and
+`Σ̂ v̂ = λ̂_j v̂`".
+
+That omission is not harmless. The eigenvector equations are homogeneous and
+`v̂ᵀv ≥ 0` only becomes more true under scaling, so from any instance take
+`Σ̂ := Σ` and `v̂ := 2v`: every printed hypothesis holds, the perturbation is zero,
+the printed bound is `0`, and `‖v̂ − v‖ = ‖v‖ = 1`. **The printed second display
+is therefore false as literally stated**, and
+`YuWangSamworth2015.corollary1_printed_unnormalized_counterexample` is the
+machine-checked refutation. The printed first display survives scaling, being
+about the angle between two spans, but is degenerate at `v̂ = 0`, which the
+printed hypotheses also admit.
+
+The two compared declarations write the normalization out. The source
+relationship stays `formalizes`: what is made explicit is a hypothesis the source
+supplies one sentence earlier, not a change to the result — unlike Theorem 3,
+where a printed convention had to be replaced. But no claim of "no added
+hypothesis" or "exactly as printed" may be made for Corollary 1, and none is.
 
 **Sample-degeneracy witness, kept as a regression:**
 `yuWangSamworth_corollary1_scalarSample` — for `Σ = diag(1,0)` and `Σ̂ = I/2`
@@ -266,6 +292,12 @@ than one of its results, and neither entry compares it.
    relationship is `adapts`.
 3. **Theorem 1's sample endpoint conventions** — as in row T1. Not selected;
    disclosed in both entries' `status.scope`.
+4. **Corollary 1's missing normalization** — as in rows C1-1 / C1-2. Selected,
+   with the inherited hypothesis written out, refuted as printed by
+   `corollary1_printed_unnormalized_counterexample`, and disclosed in the
+   symmetric entry's Challenge docstring, `sources[].note` and `fidelity`. It
+   does not change the source relationship, because the hypothesis is the
+   paper's own.
 
 ---
 
@@ -275,7 +307,7 @@ Both entries pass the real Comparator, the independent NanoDa kernel and Lean's
 own kernel, with axiom closure exactly `propext`, `Quot.sound`,
 `Classical.choice`, and each Challenge's transitive import closure reaches
 nothing in this repository. See `dev/palomar-readiness.md` for how to reproduce
-that, and `palomar/README.md` for what the status words do and do not mean.
+that, and `registry/README.md` for what the status words do and do not mean.
 
 `definition_names` is empty in both configurations, deliberately. Comparator
 treats a name listed there as a *definition hole*: it checks only that the name,
@@ -301,14 +333,29 @@ a maintainer adjudication supported by contribution evidence, not an inference
 from the mathematical paper's authorship or from organizational association, and
 it is retained.
 
-**HUMAN REVIEW ITEM, minor.** The repository does not apply the second half of
-that rule uniformly at file level: Mathlib-style `Authors:` headers under
-`YuWangSamworth2015/**` name model identifiers (`Claude Opus 5`,
+**The file headers are provenance, not authorship, and that is now said out
+loud.** Mathlib-style `Authors:` headers across `ForTauCeti/**`, `DavisKahan/**`
+and `YuWangSamworth2015/**` name model identifiers (`Claude Opus 5`,
 `OpenAI GPT-5.6 Thinking`) beside `Jon Crall`, while the two Palomar
-Challenge/Solution pairs name `Jon Crall, Edward Wang`. The published metadata is
-the one Palomar reads and it is correct; the file headers are a per-file
-provenance convention that disagrees with the stated policy. Reconciling them is
-a sweep across the package and was not done in this pass.
+Challenge/Solution pairs name `Jon Crall, Edward Wang`. Read alone that looks
+inconsistent with "models are never authors".
+
+It is not, and the fix is not to sweep it. The metadata's own `tool_setup` field
+says provenance is recorded in two places — commit trailers and module headers —
+so those 886 headers *are* the repository's declared per-declaration model
+attribution, and rewriting them would delete a provenance record the metadata
+points at. Nine of them, moreover, name a model with no human beside it, so a
+mechanical strip would either leave an empty `Authors:` line or invent a human
+attribution. What was missing was the sentence distinguishing the two registers,
+and `automation.methods[].tool_setup` in both entry metadata files now carries
+it: the headers are provenance including models; `project.authors` is authorship
+and carries only people.
+
+**HUMAN REVIEW ITEM, minor.** If the maintainer would rather the headers not use
+the `Authors:` field for model provenance, the clean change is to move model
+names to a separate header line across all three packages — a mechanical sweep,
+but one that decides a repository-wide convention and needs the nine
+human-less headers adjudicated. Not taken here.
 
 ---
 

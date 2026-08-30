@@ -63,6 +63,29 @@ printed minimum. The one exception is the full block `r = 1`, `s = p`, where the
 paper's conventions make both exterior gaps `+∞`; see that definition's
 docstring for what is claimed there.
 
+## One hypothesis is made explicit rather than inherited
+
+Corollary 1 below assumes `‖v‖ = 1` and `‖v̂‖ = 1`. **The standalone printed
+Corollary 1 does not say this**, and it should be read before comparing: the
+paper writes only "if `v, v̂ ∈ ℝ^p` satisfy `Σ v = λ_j v` and `Σ̂ v̂ = λ̂_j v̂`".
+
+Unit vectors are unambiguously what is meant — the corollary is introduced as
+the `d = 1` case of Theorem 2 ("Many if not most applications of this result
+will need only `s = r`, i.e., `d = 1`. In that case, the statement simplifies a
+little; for ease of reference, we state it as a corollary"), and Theorem 2's `V`
+and `V̂` have orthonormal columns. But the omission is not harmless: the second
+display is **false** as literally printed. The eigenvector equations are
+homogeneous and `v̂ᵀv ≥ 0` only becomes more true under scaling, so taking
+`Σ̂ = Σ` and `v̂ = 2v` satisfies every printed hypothesis with a zero perturbation
+— making the printed bound `0` — while `‖v̂ − v‖ = ‖v‖`. The accompanying
+development carries that as a machine-checked refutation. The first display
+survives scaling, being about the angle between two spans, though it is
+degenerate at `v̂ = 0`, which the printed hypotheses also admit.
+
+So these two declarations are the paper's Corollary 1 with the normalization its
+own `d = 1` reading supplies written out, not a verbatim transcription of the
+standalone display. Theorem 2 above needs no such qualification.
+
 ## Contents
 
 Theorem 2, both printed conclusions, and Corollary 1, both printed displays. The
@@ -210,7 +233,10 @@ theorem theorem2_alignedFrame {p d r s : ℕ}
 The rank-one case `r = s = j`: for unit eigenvectors `v` of `Σ` and `v̂` of `Σ̂` at
 the `j`-th eigenvalue, `sin Θ(v̂, v) ≤ 2 ‖E‖_op / Δ_j`. The sine is the length of
 the component of `v` orthogonal to `v̂`. `v̂` is arbitrary: at a repeated sample
-eigenvalue the bound holds for every admissible choice. -/
+eigenvalue the bound holds for every admissible choice.
+
+`‖v‖ = 1` and `‖v̂‖ = 1` are the one place where these statements are not
+verbatim the standalone printed display; see the module docstring. -/
 theorem corollary1_sinTheta {p j : ℕ}
     (Sigma SigmaHat : Rp p →ₗ[ℝ] Rp p)
     (hSigma : Sigma.IsSymmetric) (hSigmaHat : SigmaHat.IsSymmetric)
@@ -226,7 +252,8 @@ theorem corollary1_sinTheta {p j : ℕ}
 /-- **Corollary 1, second display.**
 
 After orienting `v̂` so that `v̂ᵀv ≥ 0`,
-`‖v̂ − v‖ ≤ 2^{3/2} ‖E‖_op / Δ_j`. -/
+`‖v̂ − v‖ ≤ 2^{3/2} ‖E‖_op / Δ_j`. This is the display that is false without the
+normalization; see the module docstring. -/
 theorem corollary1_alignedVector {p j : ℕ}
     (Sigma SigmaHat : Rp p →ₗ[ℝ] Rp p)
     (hSigma : Sigma.IsSymmetric) (hSigmaHat : SigmaHat.IsSymmetric)

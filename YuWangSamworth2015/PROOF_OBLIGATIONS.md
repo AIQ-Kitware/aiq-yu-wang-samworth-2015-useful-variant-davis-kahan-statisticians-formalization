@@ -11,9 +11,9 @@ are not being changed because `comparator/*.json` pins some of them.
 ## Numbered paper results
 
 Every numbered result has a theorem surface.  They are not all at the same
-distance from the printed page — Theorem 2 and Corollary 1 are source-exact,
-Theorem 3 is a documented correction, and Theorem 1 and Lemma A1 are more general
-than printed:
+distance from the printed page — Theorem 2 is source-exact, Corollary 1 writes out
+a hypothesis the standalone printed display omits, Theorem 3 is a documented
+correction, and Theorem 1 and Lemma A1 are more general than printed:
 
 * Theorem 1, in unitarily invariant, Frobenius and operator-norm form — more
   general than printed, and with an intrinsic separation rather than the printed
@@ -24,7 +24,9 @@ than printed:
   eigengap, so a repeated sample eigenvalue leaves it undetermined and the
   theorem must quantify over the choice;
 * Corollary 1, both displays, including the literal real sign-aligned bound
-  `‖v̂ − v‖ ≤ 2^{3/2} ‖Σ̂ − Σ‖_op / Δⱼ` under `v̂ᵀv ≥ 0`;
+  `‖v̂ − v‖ ≤ 2^{3/2} ‖Σ̂ − Σ‖_op / Δⱼ` under `v̂ᵀv ≥ 0` — with `‖v‖ = ‖v̂‖ = 1`
+  written out, since the standalone printed display omits it and is false without
+  it (`corollary1_printed_unnormalized_counterexample`);
 * Theorem 3, right and left, in the corrected form (see below);
 * Lemma A1, both halves.
 

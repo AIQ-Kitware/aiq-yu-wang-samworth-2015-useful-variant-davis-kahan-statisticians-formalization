@@ -22,7 +22,9 @@ distance from the printed page, and this list says which is which:
    an intrinsic separation rather than the printed `delta`;
 2. population-gap Theorem 2 and its aligned-frame conclusion, for arbitrary
    ordered eigenframes, source-exact;
-3. rank-one Corollary 1, both displays, source-exact;
+3. rank-one Corollary 1, both displays, with the unit normalization the
+   standalone printed display omits written out -- without it the second display
+   is false, and `corollary1_printed_unnormalized_counterexample` refutes it;
 4. right and left singular-subspace Theorem 3, in its corrected form -- the
    printed rank-boundary convention is false;
 5. Appendix Lemma A1, in a form more general than printed.

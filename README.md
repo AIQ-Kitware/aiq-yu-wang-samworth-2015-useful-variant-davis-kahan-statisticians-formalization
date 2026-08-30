@@ -78,7 +78,7 @@ which rather than using one adjective for all of them.
 | Theorem 1, the classical baseline | `yuWangSamworth_theorem1_uiNorm_le`, with Frobenius and operator-norm specializations | proved in a **more general** form (any unitarily invariant norm, arbitrary invariant subspaces) with an intrinsic separation; the printed `δ` is not reproduced, because its printed endpoint conventions make it vacuous at end blocks |
 | Theorem 2, first conclusion | `YuWangSamworth2015.theorem2_sinTheta` | **source-exact** |
 | Theorem 2, aligned frame | `YuWangSamworth2015.theorem2_alignedFrame` | **source-exact** |
-| Corollary 1, both displays | `YuWangSamworth2015.corollary1_sinTheta`, `YuWangSamworth2015.corollary1_alignedVector` | **source-exact** |
+| Corollary 1, both displays | `YuWangSamworth2015.corollary1_sinTheta`, `YuWangSamworth2015.corollary1_alignedVector` | **source-faithful**: the unit normalization the standalone printed display omits is written out; without it the second display is false |
 | Theorem 3, right and left sine | `YuWangSamworth2015.theorem3_rightSinTheta`, `…theorem3_leftSinTheta` | **corrected**: a false printed boundary convention is replaced, the printed block condition `s ≤ rank(A)` is kept |
 | Theorem 3, right and left aligned frame | `YuWangSamworth2015.theorem3_rightAlignedFrame`, `…theorem3_leftAlignedFrame` | **corrected**, same reason |
 | Appendix Lemma A1, both halves | `yuWangSamworth_lemma5_orthonormalColumns`, `yuWangSamworth_lemma5_orthonormalRows` | proved in a **more general** form |
@@ -94,7 +94,7 @@ Also formalized: the §1 numerical illustration above, both §2 sharpness
 constructions, the deterministic content of the §3 audit of statistical practice,
 and rank-one singular-vector corollaries beyond the printed paper.
 
-## Three source defects, none concealed
+## Four source defects, none concealed
 
 **Printed Equation (4) is false as printed.** The paper rewrites `sin²(2θ)` in
 terms of `‖v̂ − v‖²` and the printed right-hand side omits a square on the factor
@@ -102,6 +102,19 @@ terms of `‖v̂ − v‖²` and the printed right-hand side omits a square on t
 `yuWangSamworth_equation4` proves the corrected identity and
 `yuWangSamworth_equation4_printed_counterexample` refutes the printed polynomial
 at inner product `3/5`.
+
+**The standalone printed Corollary 1 omits its own normalization, and its second
+display is false without it.** The paper introduces Corollary 1 as the `d = 1`
+case of Theorem 2, whose `V` and `V̂` have orthonormal columns, so unit vectors
+are unambiguously meant. The standalone display nevertheless says only "if
+`v, v̂ ∈ ℝ^p` satisfy `Σ v = λ_j v` and `Σ̂ v̂ = λ̂_j v̂`". The eigenvector equations
+are homogeneous and `v̂ᵀv ≥ 0` only becomes more true under scaling, so `Σ̂ = Σ`
+with `v̂ = 2v` satisfies every printed hypothesis at zero perturbation — making
+the printed bound `0` — while `‖v̂ − v‖ = ‖v‖`. Refuted by
+`YuWangSamworth2015.corollary1_printed_unnormalized_counterexample`. **The
+Corollary 1 statements here write the normalization out.** The first printed
+display survives scaling, being about the angle between two spans, though it is
+degenerate at `v̂ = 0`, which the printed hypotheses also admit.
 
 **Theorem 3's printed rank-boundary convention is false.** The paper sets
 `σ²_{rank(A)+1} := −∞`, which makes the denominator infinite when `s = rank(A)`,
@@ -137,9 +150,21 @@ Preparation only. Nothing here claims registration, acceptance, or peer review.
 
 | config | metadata | compares | source relationship | status |
 | --- | --- | --- | --- | --- |
-| `palomar/yws-symmetric/comparator.json` | `palomar/yws-symmetric/formalization.yaml` | Theorem 2, both conclusions; Corollary 1, both displays | `formalizes` | exact |
-| `palomar/yws-rectangular/comparator.json` | `palomar/yws-rectangular/formalization.yaml` | Theorem 3, right and left, sine and aligned, plus the two singular-frame equivalences | `adapts` | source-corrected, as above |
-| `palomar/yws-2015/comparator.json` | — | one general-index-set form of Theorem 2's first conclusion | — | prototype, kept as a regression; superseded by `yws-symmetric` |
+| `registry/yws-symmetric/comparator.json` | `registry/yws-symmetric/formalization.yaml` | Theorem 2, both conclusions; Corollary 1, both displays | `formalizes` | source-faithful — Theorem 2 exact, Corollary 1 with the inherited normalization written out |
+| `registry/yws-rectangular/comparator.json` | `registry/yws-rectangular/formalization.yaml` | Theorem 3, right and left, sine and aligned, plus the two singular-frame equivalences | `adapts` | source-corrected, as above |
+
+**Two entries, and only two.** A general-index-set prototype of Theorem 2's first
+conclusion lived here until 2026-08-29. It proved the Palomar mechanics work and
+`yws-symmetric` superseded it; leaving a third configuration in a submission
+repository only invited the question of which one was the claim. It stays in the
+authoritative repository as a regression.
+
+**The configuration directory is `registry/`, not `palomar/`.** It sat beside the
+Lean library directory `Palomar/` until 2026-08-29, and two paths differing only
+in case are one path on a case-insensitive filesystem, so a Windows or
+default-macOS checkout could conflate them or refuse operations. `Palomar/` is
+Lean source; `registry/` is submission configuration and metadata. Palomar selects
+both paths explicitly, so nothing about a submission depends on the name.
 
 A Palomar entry is one Comparator configuration, and one `formalization.yaml`
 records one relationship per source. The two paper-facing entries therefore carry
@@ -155,7 +180,7 @@ deliberately: Comparator treats a listed name as a *definition hole* and stops
 comparing that definition's value, and every helper definition in these Challenges
 is fully specified, so listing them weakened the comparison rather than
 strengthening it. The clause-by-clause basis for what is selected, what is not,
-and why, is [`palomar/YWS_SOURCE_CONTRACT.md`](palomar/YWS_SOURCE_CONTRACT.md).
+and why, is [`registry/YWS_SOURCE_CONTRACT.md`](registry/YWS_SOURCE_CONTRACT.md).
 
 Theorem 1 is deliberately not selected, for the reason in the previous section: a
 paper-facing statement of its printed `δ` would be a third corrected entry, not an
@@ -198,13 +223,13 @@ checkout, whose own pin is not the one you set on the checkout. With the tools o
 PATH:
 
 ```bash
-lake env comparator palomar/yws-symmetric/comparator.json
-lake env comparator palomar/yws-rectangular/comparator.json
+lake env comparator registry/yws-symmetric/comparator.json
+lake env comparator registry/yws-rectangular/comparator.json
 ```
 
 `lake env` is required: the exporter needs the Lake search path to find the
-compiled modules. All three configs pass Comparator, NanoDa and Lean's own kernel,
-with axiom closure exactly `propext`, `Quot.sound`, `Classical.choice`.
+compiled modules. Both configs pass Comparator, NanoDa and Lean's own kernel, with
+axiom closure exactly `propext`, `Quot.sound`, `Classical.choice`.
 
 That is local verification only. It is not Palomar verification, not acceptance,
 and not registration.

@@ -10,8 +10,11 @@
 # the two prepared entries relate to the source differently. Each therefore
 # carries its own metadata, which is what a submission should select:
 #
-#   palomar/yws-symmetric/comparator.json    palomar/yws-symmetric/formalization.yaml
-#   palomar/yws-rectangular/comparator.json  palomar/yws-rectangular/formalization.yaml
+#   registry/yws-symmetric/comparator.json    registry/yws-symmetric/formalization.yaml
+#   registry/yws-rectangular/comparator.json  registry/yws-rectangular/formalization.yaml
+#
+# The directory is `registry/`, not `palomar/`: a path differing only in case from
+# the Lean library directory `Palomar/` is the same path on Windows and on macOS.
 #
 # This file is the repository-wide record and the default metadata path.
 version: v0.4
@@ -48,8 +51,14 @@ project:
 
     The results are represented at different distances from the printed page,
     and the repository says which is which rather than averaging them. Theorem 2
-    and Corollary 1 have source-exact paper-facing statements. Theorem 3 is a
-    documented correction of a false printed boundary convention: the printed
+    has source-exact paper-facing statements. Corollary 1 writes out the unit
+    normalization its standalone printed display omits: the paper introduces the
+    corollary as the d = 1 case of Theorem 2, whose frames have orthonormal
+    columns, but the standalone display says only that v and v-hat satisfy the two
+    eigenvector equations, and without normalization its second display is false
+    -- scaling v-hat preserves every printed hypothesis while ||v-hat - v|| does
+    not -- which this repository refutes. Theorem 3 is a documented correction of
+    a false printed boundary convention: the printed
     sigma^2_{rank(A)+1} := -infinity makes the denominator infinite at the rank
     boundary, so the printed bound asserts that two singular subspaces which can
     be orthogonal coincide; that is refuted here by a compiled counterexample,
@@ -108,13 +117,13 @@ sources:
     individual result, and a Palomar submission should select the per-entry
     metadata instead. Precisely: Theorem 2 and Corollary 1 are formalized and
     compared at the printed statement, with no added hypothesis and no weakened
-    conclusion -- that is `palomar/yws-symmetric`, whose metadata records
+    conclusion -- that is `registry/yws-symmetric`, whose metadata records
     `formalizes`. Theorem 3 is compared in a corrected form, because its printed
     rank-boundary convention is false and is refuted here; that is
-    `palomar/yws-rectangular`, whose metadata records `adapts`. Theorem 1 and
+    `registry/yws-rectangular`, whose metadata records `adapts`. Theorem 1 and
     Appendix Lemma A1 are formalized here but are not compared by any Comparator
     entry. The clause-by-clause basis for all of this is
-    `palomar/YWS_SOURCE_CONTRACT.md`.
+    `registry/YWS_SOURCE_CONTRACT.md`.
   author_endorsement: not-contacted
 
 status:
@@ -124,10 +133,10 @@ status:
     right and left singular subspaces with sine and aligned-frame conclusions,
     and Appendix Lemma A1 -- together with the Section 1 numerical illustration,
     both Section 2 sharpness constructions, the deterministic content of the
-    Section 3 audit, and the source-defect refutations.
+    Section 3 audit, and the three source-defect refutations.
 
-    Compared by Comparator: Theorem 2 and Corollary 1 (`palomar/yws-symmetric`,
-    source-exact) and Theorem 3 (`palomar/yws-rectangular`, source-corrected,
+    Compared by Comparator: Theorem 2 and Corollary 1 (`registry/yws-symmetric`,
+    source-faithful) and Theorem 3 (`registry/yws-rectangular`, source-corrected,
     together with two equivalences showing that the Gram form of a singular block
     is the paper's printed pair of singular-vector equations at the indices the
     source rank condition selects). Not compared: Theorem 1, Appendix Lemma A1,
@@ -141,12 +150,15 @@ status:
     conventions lambda-hat_0 = -inf, lambda-hat_{p+1} = inf, the ray is the whole
     line at r = 1 or s = p and the separation is 0. Selecting Theorem 1 would
     therefore mean a third entry with a disclosed correction, which is a scope
-    decision that has not been taken. `palomar/YWS_SOURCE_CONTRACT.md` row T1
+    decision that has not been taken. `registry/YWS_SOURCE_CONTRACT.md` row T1
     records it.
 
-    `palomar/yws-2015/comparator.json` is a retained prototype, not a
-    paper-facing claim: it compares Theorem 2's first conclusion in a convenient
-    general-index-set shape. `palomar/yws-symmetric` supersedes it.
+    There are two Comparator configurations here and only two. A general-index-set
+    prototype of Theorem 2's first conclusion was carried until 2026-08-29;
+    `registry/yws-symmetric` superseded it and it was removed, because a third
+    configuration in a submission repository only invites the question of which
+    one is the claim. It remains in the authoritative repository as a
+    regression.
 
     The Challenge modules carry the deliberate statement-side holes the
     Comparator convention requires; no library declaration is left incomplete.
@@ -159,17 +171,19 @@ status:
   - name: YWSPalomar.theorem2_sinTheta
     statement: 'Theorem 2, first conclusion: the Frobenius sin-Theta distance between the population
       and sample eigenspaces of a block is at most 2 min(sqrt d |E|_op, |E|_F) / Delta, where
-      Delta is the population boundary gap of the block. Exact.'
+      Delta is the population boundary gap of the block. The printed statement.'
   - name: YWSPalomar.theorem2_alignedFrame
     statement: 'Theorem 2, second conclusion: some orthogonal d-by-d matrix O-hat satisfies
       |V-hat O-hat - V|_F <= 2^(3/2) min(sqrt d |E|_op, |E|_F) / Delta, against the supplied
-      population frame. Exact.'
+      population frame. The printed statement.'
   - name: YWSPalomar.corollary1_sinTheta
     statement: 'Corollary 1, first display: the rank-one case, sin Theta(v-hat, v) <= 2 |E|_op
-      / Delta_j with Delta_j the neighbouring population gap. Exact.'
+      / Delta_j with Delta_j the neighbouring population gap, with the unit normalization the
+      standalone printed display omits made explicit.'
   - name: YWSPalomar.corollary1_alignedVector
     statement: 'Corollary 1, second display: under the printed orientation condition, |v-hat
-      - v| <= 2^(3/2) |E|_op / Delta_j. Exact.'
+      - v| <= 2^(3/2) |E|_op / Delta_j, with the unit normalization made explicit. Without it
+      the printed display is false, and this repository refutes it.'
   - name: YWSRectangular.theorem3_rightSinTheta
     statement: 'Theorem 3, right singular subspaces, sine conclusion, at the source block
       1 <= r <= s <= rank(A), with the rank-boundary convention CORRECTED from
@@ -238,13 +252,22 @@ automation:
 
 fidelity:
   divergences: >-
-    Three points where this development departs from the printed paper, all
+    Four points where this development departs from the printed paper, all
     machine-checked or documented rather than concealed.
 
     (1) Printed Equation (4). The rewrite of sin^2(2 theta) in terms of
     |v-hat - v|^2 omits a square on the factor (2 - |v-hat - v|^2). The corrected
     identity is proved and the printed polynomial is refuted at inner product
     3/5. Not part of any compared entry.
+
+    (1b) The standalone printed Corollary 1 omits the unit normalization its own
+    d = 1 reading supplies, and its second display is false without it: with
+    SigmaHat = Sigma and v-hat = 2v every printed hypothesis holds, the
+    perturbation is zero, and ||v-hat - v|| = ||v|| exceeds the zero bound.
+    Refuted by `corollary1_printed_unnormalized_counterexample`. The compared
+    statements write the normalization out; the source relationship stays
+    `formalizes`, because the hypothesis is the paper's own from one sentence
+    earlier, but no claim of 'no added hypothesis' is made for Corollary 1.
 
     (2) Theorem 3's printed convention sigma^2_{rank(A)+1} := -infinity makes the
     denominator infinite when the block ends at rank(A), so the printed bound
@@ -265,11 +288,12 @@ fidelity:
     statement IS the printed delta, and no such claim is made. Not part of any
     compared entry.
 
-    Beyond these, the compared Theorem 2 and Corollary 1 statements are the
-    printed ones, with no added hypothesis and no weakened conclusion; in
-    particular no sample eigengap is introduced and the sample eigenframe is an
-    arbitrary admissible one. Lean indices are zero-based throughout, so a
-    printed block 1 <= r <= s <= p appears as r <= s together with s < p.
+    Beyond these, the compared Theorem 2 statements are the printed ones, with no
+    added hypothesis and no weakened conclusion, and the compared Corollary 1
+    statements differ from the printed display only by the normalization in (1b);
+    in particular no sample eigengap is introduced and the sample eigenframe is an
+    arbitrary admissible one. Lean indices are zero-based throughout, so a printed
+    block 1 <= r <= s <= p appears as r <= s together with s < p.
 
 review:
   status: self-assessed
