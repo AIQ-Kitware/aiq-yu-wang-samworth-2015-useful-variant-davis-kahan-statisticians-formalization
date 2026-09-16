@@ -1,8 +1,10 @@
 name = "yws_2015_formalization"
 version = "0.1.0"
-# The default build is the mathematics. The Palomar entries are built explicitly
-# with `lake build Palomar`, because their Challenge modules carry the deliberate
-# statement-side holes the Comparator convention requires.
+# The default build is the substantive mathematics. Palomar Challenge/Solution
+# modules are built explicitly from the selected comparator.json files by
+# scripts/verify_palomar.sh, because Challenge declarations deliberately contain
+# statement-side holes and Challenge/Solution repeat the same declaration names
+# in separate environments.
 defaultTargets = ["YuWangSamworth2015"]
 
 [leanOptions]
@@ -44,10 +46,12 @@ srcDir = "YuWangSamworth2015"
 globs = ["YuWangSamworth2015.*"]
 leanOptions = { warningAsError = true, weak.linter.mathlibStandardSet = true, weak.linter.style.longFile = 1500, weak.linter.style.longFileDefValue = 1500, weak.linter.style.header = false }
 
-# The Palomar entries. Each `Challenge` states its theorems against Mathlib alone
-# and contains deliberate statement-side holes; each `Solution` supplies the same
-# declarations from the libraries above. Comparator checks that the two agree.
-# Intentionally not a default target: the Challenge modules contain holes.
+# The Palomar entries. Each Challenge states its theorems against Mathlib alone.
+# Each Solution first imports a Mathlib-only SolutionPrelude containing the exact
+# Challenge vocabulary prefix, then imports the larger proof development. This
+# keeps Comparator-visible helper constants stable across the two environments.
+# Intentionally not a default target: scripts/verify_palomar.sh builds the exact
+# Challenge and Solution modules selected by each Comparator configuration.
 [[lean_lib]]
 name = "Palomar"
 globs = ["Palomar.*"]

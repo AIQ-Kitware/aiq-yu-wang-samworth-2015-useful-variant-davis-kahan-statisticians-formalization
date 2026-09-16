@@ -1,42 +1,51 @@
 #!/usr/bin/env bash
-# Verify this Palomar Registry submission repository locally.
+# Verify every prepared Palomar Registry entry in this repository locally.
 #
-# This runs the checks we can run here. It is NOT Palomar's verification, it never
-# contacts the registry, and passing it establishes nothing about acceptance.
-# Registration is permanent and is a maintainer decision. An agent must not submit.
-#
-# It lives here rather than in the authoritative development repository because it
-# asks whether *this* repository verifies. The development repository carried a
-# copy until 2026-08-30; it is no longer a submission and no longer needs one.
+# This is not Palomar's verification and it never contacts the registry.
+# It mirrors the important local stages: static readiness, exact Challenge/
+# Solution builds, Comparator export, NanoDa replay, and Lean kernel replay.
 #
 # Usage:
-#   scripts/verify_palomar.sh                    # every entry
-#   scripts/verify_palomar.sh yws-symmetric      # one entry, by directory name
-#   scripts/verify_palomar.sh root               # the root comparator.json
-#   scripts/verify_palomar.sh --static-only      # skip the exporter
-#   scripts/verify_palomar.sh --fake-landrun     # no landrun available
-#
-# Three stages, cheapest first, each a real check rather than a proxy for one:
-#
-#   1. static preflight   scripts/check_palomar_readiness.py -- submodules, LFS,
-#                         artifacts, licence, manifest pins, metadata shape,
-#                         comparator keys, Challenge sizes and import closure
-#   2. build              every `lean_lib` the lakefile declares, so the Challenge
-#                         modules with their deliberate statement-side holes are
-#                         built too, not only the default targets
-#   3. comparator+NanoDa  the real exporter and the independent kernel; ground truth
-#
-# Stage 3 needs `comparator`, `lean4export` and `nanoda_bin`. Install them from
-# https://github.com/leanprover/comparator and https://github.com/ammkrn/nanoda_lib,
-# built at the Lean in `lean-toolchain` -- lean4export reads this repository's
-# oleans directly, and an exporter built at another version fails with
-# `incompatible header`, which looks like a broken statement rather than a version
-# mismatch. `landrun` is the sandbox, not a check: without it, `--fake-landrun`
-# runs the same commands unsandboxed and the comparison is unaffected.
+#   scripts/verify_palomar.sh
+#   scripts/verify_palomar.sh yws-symmetric
+#   scripts/verify_palomar.sh yws-rectangular
+#   scripts/verify_palomar.sh --static-only
+#   scripts/verify_palomar.sh --fake-landrun
 set -uo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
+
+add_cached_palomar_tools_to_path() {
+    local candidate
+    local cache_parent="${PALOMAR_TOOLS_CACHE_PARENT:-$HOME/.cache}"
+    local -a candidates=()
+    local -a dated=()
+
+    [[ -n "${PALOMAR_TOOLS_BIN:-}" ]] && candidates+=("$PALOMAR_TOOLS_BIN")
+    candidates+=("$cache_parent/palomar-tools-latest/bin")
+
+    shopt -s nullglob
+    dated=("$cache_parent"/palomar-tools-[0-9]*/bin)
+    shopt -u nullglob
+    if [[ ${#dated[@]} -gt 0 ]]; then
+        while IFS= read -r candidate; do
+            candidates+=("$candidate")
+        done < <(printf '%s\n' "${dated[@]}" | sort -r)
+    fi
+
+    for candidate in "${candidates[@]}"; do
+        [[ -d "$candidate" ]] || continue
+        if [[ -x "$candidate/comparator" && -x "$candidate/lean4export" \
+            && -x "$candidate/nanoda_bin" && -x "$candidate/landrun" ]]; then
+            PATH="$PATH:$candidate"
+            export PATH
+            echo "    added cached Palomar tools to PATH: $candidate"
+            return 0
+        fi
+    done
+    return 1
+}
 
 ENTRIES=()
 STATIC_ONLY=0
@@ -47,20 +56,20 @@ while [[ $# -gt 0 ]]; do
         --all) ;;
         --static-only) STATIC_ONLY=1 ;;
         --fake-landrun) FAKE_LANDRUN=1 ;;
-        -h|--help) sed -n '2,34p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'; exit 0 ;;
+        -h|--help)
+            sed -n '2,22p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'
+            exit 0
+            ;;
         -*) echo "unknown option: $1" >&2; exit 2 ;;
         *) ENTRIES+=("$1") ;;
     esac
     shift
 done
 
-# Entry discovery covers both submission layouts: Palomar's ordinary one, with a
-# single `comparator.json` at the repository root, and the multi-entry one, with
-# `registry/<entry>/comparator.json` selected explicitly at submission time.
 config_for() {
     case "$1" in
         root) echo "comparator.json" ;;
-        *)    echo "registry/$1/comparator.json" ;;
+        *) echo "registry/$1/comparator.json" ;;
     esac
 }
 
@@ -74,25 +83,58 @@ if [[ ${#ENTRIES[@]} -eq 0 ]]; then
 fi
 
 if [[ ${#ENTRIES[@]} -eq 0 ]]; then
-    echo "no comparator.json at the root and none under registry/*/" >&2
+    echo "no comparator.json at root and none under registry/*/" >&2
     exit 2
 fi
 
-# Every declared library, not just `defaultTargets`: a Challenge library is
-# deliberately excluded from the default build because it carries holes, and it is
-# exactly the thing that must compile before the exporter can read it.
-LIBS=()
-while IFS= read -r lib; do LIBS+=("$lib"); done < <(
-    awk '/^\[\[lean_lib\]\]/{f=1;next} f && /^name[[:space:]]*=/{gsub(/[^"]*"/,"",$0);gsub(/".*/,"",$0);print;f=0}' lakefile.toml
-)
+# Comparator compares every non-target constant transitively. These preludes
+# deliberately elaborate the Challenge vocabulary under Mathlib alone before
+# Solution imports the proof development. Keep them source-identical.
+PRELUDE_OK=1
+if [[ -f scripts/check_solution_preludes.py ]]; then
+    echo "======================================================================"
+    echo "Comparator vocabulary prelude check"
+    echo "======================================================================"
+    python3 scripts/check_solution_preludes.py || PRELUDE_OK=0
+fi
+
+# Build the exact modules selected by the requested Comparator configurations.
+BUILD_TARGETS=()
+for entry in "${ENTRIES[@]}"; do
+    cfg="$(config_for "$entry")"
+    if [[ ! -f "$cfg" ]]; then
+        continue
+    fi
+    while IFS= read -r module; do
+        [[ -n "$module" ]] && BUILD_TARGETS+=("$module")
+    done < <(python3 - "$cfg" <<'PY'
+import json
+import pathlib
+import sys
+cfg = json.loads(pathlib.Path(sys.argv[1]).read_text())
+for key in ("challenge_module", "solution_module"):
+    value = cfg.get(key)
+    if isinstance(value, str) and value:
+        print(value)
+PY
+    )
+done
+
+# Deduplicate while preserving order.
+if [[ ${#BUILD_TARGETS[@]} -gt 0 ]]; then
+    mapfile -t BUILD_TARGETS < <(printf '%s\n' "${BUILD_TARGETS[@]}" | awk '!seen[$0]++')
+fi
 
 echo "======================================================================"
-echo "build: ${LIBS[*]:-<none declared>}"
+echo "build: ${BUILD_TARGETS[*]:-<none selected>}"
 echo "======================================================================"
-BUILD_OK=1
-for lib in ${LIBS[@]+"${LIBS[@]}"}; do
-    lake build "$lib" || BUILD_OK=0
-done
+BUILD_OK=$PRELUDE_OK
+if [[ ${#BUILD_TARGETS[@]} -eq 0 ]]; then
+    echo "no Challenge/Solution modules selected by requested comparator configs" >&2
+    BUILD_OK=0
+else
+    lake build "${BUILD_TARGETS[@]}" || BUILD_OK=0
+fi
 
 FAILED=()
 for entry in "${ENTRIES[@]}"; do
@@ -107,10 +149,14 @@ for entry in "${ENTRIES[@]}"; do
     fi
 
     ok=$BUILD_OK
-    [[ $BUILD_OK -eq 1 ]] || echo "--- build FAILED above; later stages are not meaningful"
+    [[ $BUILD_OK -eq 1 ]] || echo "--- build/prelude FAILED above; later stages are not meaningful"
 
     echo "--- 1/3 static preflight"
-    python3 scripts/check_palomar_readiness.py --entry "$entry" || ok=0
+    if [[ "$entry" == "root" ]]; then
+        python3 scripts/check_palomar_readiness.py --entry root || ok=0
+    else
+        python3 scripts/check_palomar_readiness.py --entry "$entry" || ok=0
+    fi
 
     echo "--- 2/3 build: done above"
 
@@ -119,20 +165,35 @@ for entry in "${ENTRIES[@]}"; do
         echo "    Not a pass. The exporter is ground truth and did not run."
     else
         echo "--- 3/3 comparator + NanoDa"
+        if ! command -v comparator >/dev/null 2>&1 \
+            || ! command -v lean4export >/dev/null 2>&1 \
+            || ! command -v nanoda_bin >/dev/null 2>&1 \
+            || { [[ $FAKE_LANDRUN -eq 0 && -z "${COMPARATOR_LANDRUN:-}" ]] \
+                && ! command -v landrun >/dev/null 2>&1; }; then
+            add_cached_palomar_tools_to_path || true
+        fi
+
         if ! command -v comparator >/dev/null 2>&1; then
-            echo "    comparator is not on PATH; see the header of this script."
+            echo "    comparator was not found on PATH or in a cached Palomar tool bundle."
+            echo "    Run scripts/build_verification_tools.sh."
+            ok=0
+        elif ! command -v lean4export >/dev/null 2>&1; then
+            echo "    lean4export was not found on PATH or in a cached Palomar tool bundle."
+            echo "    Run scripts/build_verification_tools.sh."
             ok=0
         elif ! command -v nanoda_bin >/dev/null 2>&1; then
-            echo "    nanoda_bin is not on PATH. NanoDa is the second, independent"
-            echo "    kernel and is a check, not a convenience; refusing to report a"
-            echo "    pass without it. See the header of this script."
+            echo "    nanoda_bin was not found on PATH or in a cached Palomar tool bundle."
+            echo "    NanoDa is the independent second kernel; refusing to report a pass without it."
+            echo "    Run scripts/build_verification_tools.sh."
+            ok=0
+        elif [[ $FAKE_LANDRUN -eq 0 && -z "${COMPARATOR_LANDRUN:-}" ]] \
+            && ! command -v landrun >/dev/null 2>&1; then
+            echo "    landrun was not found on PATH or in a cached Palomar tool bundle."
+            echo "    Run scripts/build_verification_tools.sh or pass --fake-landrun."
             ok=0
         else
             if [[ $FAKE_LANDRUN -eq 1 && -z "${COMPARATOR_LANDRUN:-}" ]]; then
-                echo "    landrun is bypassed (--fake-landrun): the exporter runs"
-                echo "    unsandboxed. That is a weaker sandbox, not a weaker check."
-                # Comparator invokes landrun with its own flags, so the bypass has
-                # to be a shim that discards them rather than a bare `env`.
+                echo "    landrun is bypassed (--fake-landrun): the exporter runs unsandboxed."
                 SHIM="$(mktemp)"
                 cat > "$SHIM" <<'SHIM_EOF'
 #!/usr/bin/env bash
@@ -141,7 +202,15 @@ value_flags=(--ro --rox --rw --rwx --bind-tcp --connect-tcp --log-level --env)
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --) shift; break ;;
-    -*) for vf in "${value_flags[@]}"; do [[ "$1" == "$vf" ]] && shift && break; done; shift ;;
+    -*)
+      for vf in "${value_flags[@]}"; do
+        if [[ "$1" == "$vf" ]]; then
+          shift
+          break
+        fi
+      done
+      shift
+      ;;
     *) break ;;
   esac
 done
@@ -153,8 +222,6 @@ SHIM_EOF
                 export COMPARATOR_LANDRUN="$SHIM"
                 trap 'rm -f "$SHIM"' EXIT
             fi
-            # `lake env` is required: the exporter needs the Lake search path to
-            # find this repository's compiled modules.
             lake env comparator "$cfg" || ok=0
         fi
     fi
@@ -167,10 +234,10 @@ echo "======================================================================"
 if [[ ${#FAILED[@]} -eq 0 ]]; then
     echo "palomar verify: OK for ${#ENTRIES[@]} entry/entries"
     echo
-    echo "  Locally verified only. This is not Palomar verification, not"
-    echo "  acceptance, and not registration. The maintainer reviews the prepared"
-    echo "  commit and submits; an agent must not."
+    echo "  Locally verified only. This is not Palomar verification, acceptance,"
+    echo "  or registration. The maintainer reviews the prepared commit and submits."
     exit 0
 fi
+
 echo "palomar verify: FAILED for ${#FAILED[@]} of ${#ENTRIES[@]}: ${FAILED[*]}"
 exit 1
