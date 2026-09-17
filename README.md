@@ -1,257 +1,130 @@
-# Yu–Wang–Samworth 2015, formalized in Lean 4
+# Yu-Wang-Samworth 2015, formalized in Lean 4
 
 A machine-checked formalization of Yi Yu, Tengyao Wang and Richard J. Samworth,
-*A useful variant of the Davis–Kahan theorem for statisticians*, Biometrika
-**102** (2015) 315–323, <https://doi.org/10.1093/biomet/asv008>.
+*A useful variant of the Davis-Kahan theorem for statisticians*, Biometrika
+**102** (2015) 315-323, <https://doi.org/10.1093/biomet/asv008>.
 
-Published numbering throughout. The 2014 arXiv preprint shares one counter across
-environments and numbers the same results differently; many Lean declaration names
-still carry the preprint numbering, and the correspondence is
+Published numbering is used in the paper-facing documentation. Some internal
+Lean names retain numbering from the 2014 preprint; the correspondence is
 Corollary 1 = Corollary 3, Theorem 3 = Theorem 4, Lemma A1 = Lemma 5.
 
-## What the paper says, and why it is cited
+## The population-gap idea
 
-Let `Σ` be a real symmetric `p × p` matrix — a population covariance — and `Σ̂` a
-symmetric estimate of it. Fix a block `r, …, s` of eigenvalue indices in
-nonincreasing order and let `V`, `V̂` hold orthonormal eigenvectors of `Σ` and `Σ̂`
-at those indices. How far is the sample eigenspace from the population one?
+For real symmetric `Sigma, SigmaHat`, the classical Davis-Kahan separation mixes
+population eigenvalues in the selected block with sample eigenvalues outside it.
+Yu, Wang and Samworth replace that by the population-only gap
 
-The classical Davis–Kahan answer divides the perturbation by a separation between
-the population eigenvalues *inside* the block and the sample eigenvalues *outside*
-it. That quantity mixes the two spectra, so it is random, unobserved, and is
-typically what the statistician is trying to estimate in the first place. It can
-vanish while the population spectrum is perfectly well separated. The paper's own
-§1 illustration is `Σ = diag(50, 40, 30, 20, 10)` and `Σ̂ = diag(54, 37, 32, 23,
-21)` at the eigenvectors for the second, third and fourth largest eigenvalues —
-`r = 2`, `s = 4` in the paper's one-based indexing, the zero-based Lean block
-`1, 2, 3`. There `λ₄ = 20` lies in the exterior ray `(−∞, λ̂₅] = (−∞, 21]`, so the
-classical separation is `0`, while the population gap
-`min(λ₁ − λ₂, λ₄ − λ₅) = 10`.
+`Delta = min(lambda_(r-1) - lambda_r, lambda_s - lambda_(s+1))`.
 
-**Yu, Wang and Samworth's contribution is that the separation may be taken
-entirely inside the population spectrum.** With
-`Δ = min(λ_{r−1} − λ_r, λ_s − λ_{s+1})`, `E = Σ̂ − Σ` and `d = s − r + 1`,
+With `E = SigmaHat - Sigma` and `d = s - r + 1`, Theorem 2 gives
 
-* `‖sin Θ(V̂, V)‖_F ≤ 2 min(√d ‖E‖_op, ‖E‖_F) / Δ`, and
-* some `Ô ∈ O(d)` has `‖V̂Ô − V‖_F ≤ 2^{3/2} min(√d ‖E‖_op, ‖E‖_F) / Δ`.
+* `||sin Theta(Vhat,V)||_F <= 2 min(sqrt(d)||E||_op,||E||_F)/Delta`, and
+* an orthogonal `O` with
+  `||Vhat O - V||_F <= 2^(3/2) min(sqrt(d)||E||_op,||E||_F)/Delta`.
 
-Every *separation* hypothesis constrains `Σ` alone: `Δ` is built from the
-population spectrum only, and `Σ̂` enters the bound solely through `E`. (`Σ̂` is of
-course assumed symmetric, and `V̂` is assumed to be one of its eigenframes at the
-block; what is absent is any gap or separation condition on its spectrum.) That is
-what makes the bound usable, and it is why the paper is cited across spectral
-methods — principal component analysis, spectral clustering, covariance
-estimation, and network models where an adjacency or Laplacian matrix concentrates
-around a population version.
+No sample eigengap is assumed. The sample frame is arbitrary among admissible
+orthonormal eigenframes at the selected indices, including under multiplicity.
+Corollary 1 is the rank-one specialization.
 
-**No sample eigengap is assumed in Theorem 2 or Corollary 1, and that is not a
-technicality.** `Σ̂` may have a repeated eigenvalue at the block, in which case `V̂`
-is not determined, and the theorem quantifies over *every* admissible orthonormal
-sample eigenframe. A formulation pinning `V̂` to one chosen eigenbasis would be a
-different and weaker statement. `yuWangSamworth_corollary1_scalarSample` is the
-extreme witness: for `Σ = diag(1, 0)` and `Σ̂ = I/2` every unit vector of the plane
-is an admissible sample eigenvector, and Corollary 1 bounds the angle for each of
-them. Theorem 1 is the classical baseline the paper argues *against*, and its
-separation is mixed by design.
+Theorem 3 carries the same idea to a general real `p x q` matrix and its right
+and left singular subspaces, with the squared population singular gap and the
+additional factor `(2 sigma_1 + ||Ahat-A||_op)`.
 
-**The aligned-frame conclusion** is the second display above. `‖sin Θ‖_F` measures
-the angle between two *subspaces*; the statistician usually wants to compare the
-frames themselves, and the two differ by an orthogonal rotation of the block. The
-theorem produces that rotation explicitly and compares `V̂Ô` against the supplied
-`V`, not against some other frame of the same span.
+## Source fidelity
 
-**Theorem 3** carries all of this to rectangular `A, Â ∈ ℝ^{p×q}` and their
-singular subspaces, for a block `1 ≤ r ≤ s ≤ rank(A)`, with the squared population
-singular gap `Δ_sv = min(σ²_{r−1} − σ²_r, σ²_s − σ²_{s+1})` and an extra factor
-`(2σ₁ + ‖D‖_op)`. The paper presents it as a population-gap counterpart of Wedin's
-generalized `sin θ` theorem, and it holds for right and left singular blocks
-alike. Its printed rank-boundary convention is false; see below.
+The formalization deliberately distinguishes three source dispositions instead
+of describing every selected theorem with one adjective:
 
-## What is formalized here
+| selected result | disposition |
+| --- | --- |
+| Theorem 2, both conclusions | **source-exact** |
+| Corollary 1, both displays | **source-faithful**: the unit normalization inherited from its `d = 1` derivation from Theorem 2 is written out |
+| Theorem 3, right/left sine and aligned-frame conclusions | **source-corrected**: the false printed rank-boundary convention is replaced by the ambient Gram-spectrum convention used by the paper's proof |
 
-Every numbered result of the paper is represented in the development. They are
-*not* all at the same distance from the printed page, and this table says which is
-which rather than using one adjective for all of them.
+The standalone printed Corollary 1 does not state `||v|| = ||vhat|| = 1`, even
+though the preceding sentence introduces it as the `d = 1` case of Theorem 2,
+whose frame columns are orthonormal. Without normalization its second display is
+false; the repository contains a machine-checked counterexample.
 
-| result | Lean | source disposition |
-| --- | --- | --- |
-| Theorem 1, the classical baseline | `yuWangSamworth_theorem1_uiNorm_le`, with Frobenius and operator-norm specializations | proved in a **more general** form (any unitarily invariant norm, arbitrary invariant subspaces) with an intrinsic separation; the printed `δ` is not reproduced, because its printed endpoint conventions make it vacuous at end blocks |
-| Theorem 2, first conclusion | `YuWangSamworth2015.theorem2_sinTheta` | **source-exact** |
-| Theorem 2, aligned frame | `YuWangSamworth2015.theorem2_alignedFrame` | **source-exact** |
-| Corollary 1, both displays | `YuWangSamworth2015.corollary1_sinTheta`, `YuWangSamworth2015.corollary1_alignedVector` | **source-faithful**: the unit normalization the standalone printed display omits is written out; without it the second display is false |
-| Theorem 3, right and left sine | `YuWangSamworth2015.theorem3_rightSinTheta`, `…theorem3_leftSinTheta` | **corrected**: a false printed boundary convention is replaced, the printed block condition `s ≤ rank(A)` is kept |
-| Theorem 3, right and left aligned frame | `YuWangSamworth2015.theorem3_rightAlignedFrame`, `…theorem3_leftAlignedFrame` | **corrected**, same reason |
-| Appendix Lemma A1, both halves | `yuWangSamworth_lemma5_orthonormalColumns`, `yuWangSamworth_lemma5_orthonormalRows` | proved in a **more general** form |
+Theorem 3 prints `sigma^2_(rank(A)+1) := -infinity`. At `s = rank(A)` that makes
+the denominator infinite and can force a zero bound although sample and
+population singular subspaces are orthogonal. The corrected statements read the
+endpoint in the ambient spectrum of `A^T A` (right) or `A A^T` (left), where
+singular values are zero past rank. The paper's separate restriction
+`1 <= r <= s <= rank(A)` is retained.
 
-The `yuWangSamworth_*` names live in `YuWangSamworth2015.DavisKahanTheory`; the
-paper-facing wrappers live directly in `YuWangSamworth2015`. The Theorem 3
-wrappers are specializations of
-`YuWangSamworth2015.DavisKahanTheory.yuWangSamworth_rightSingularSubspace_block_le`
-and its three companions, which are proved without the source's rank restriction —
-a valid generalization that is kept, but is not what the paper states.
+Two additional printed defects are formalized but are not part of the Palomar
+selection: Equation (4) omits a square, and Theorem 1's printed sample endpoint
+conventions invert its exterior rays and make its positive-separation hypothesis
+impossible at end blocks. Appendix Lemma A1, sharpness constructions, the
+Section 1 numerical illustration and other supporting material are also present
+in the wider development.
 
-Also formalized: the §1 numerical illustration above, both §2 sharpness
-constructions, the deterministic content of the §3 audit of statistical practice,
-and rank-one singular-vector corollaries beyond the printed paper.
-
-## Four source defects, none concealed
-
-**Printed Equation (4) is false as printed.** The paper rewrites `sin²(2θ)` in
-terms of `‖v̂ − v‖²` and the printed right-hand side omits a square on the factor
-`(2 − ‖v̂ − v‖²)`. Both directions are machine-checked:
-`yuWangSamworth_equation4` proves the corrected identity and
-`yuWangSamworth_equation4_printed_counterexample` refutes the printed polynomial
-at inner product `3/5`.
-
-**The standalone printed Corollary 1 omits its own normalization, and its second
-display is false without it.** The paper introduces Corollary 1 as the `d = 1`
-case of Theorem 2, whose `V` and `V̂` have orthonormal columns, so unit vectors
-are unambiguously meant. The standalone display nevertheless says only "if
-`v, v̂ ∈ ℝ^p` satisfy `Σ v = λ_j v` and `Σ̂ v̂ = λ̂_j v̂`". The eigenvector equations
-are homogeneous and `v̂ᵀv ≥ 0` only becomes more true under scaling, so `Σ̂ = Σ`
-with `v̂ = 2v` satisfies every printed hypothesis at zero perturbation — making
-the printed bound `0` — while `‖v̂ − v‖ = ‖v‖`. Refuted by
-`YuWangSamworth2015.corollary1_printed_unnormalized_counterexample`. **The
-Corollary 1 statements here write the normalization out.** The first printed
-display survives scaling, being about the angle between two spans, though it is
-degenerate at `v̂ = 0`, which the printed hypotheses also admit.
-
-**Theorem 3's printed rank-boundary convention is false.** The paper sets
-`σ²_{rank(A)+1} := −∞`, which makes the denominator infinite when `s = rank(A)`,
-so the printed bound asserts that the sample and population singular subspaces
-coincide. They need not: take `A` and `Â` to be the orthogonal projections of `ℝ²`
-onto the two coordinate axes — both have rank one, so `r = s = 1 = rank(A)` is
-admissible and the printed hypothesis holds, yet the two right singular subspaces
-are orthogonal and `‖sin Θ‖_F = 1`. Refuted by
-`yuWangSamworth_theorem3_printed_rankBoundary_refutation`. The correction is the
-paper's own proof's convention — pass to `AᵀA` with eigenvalues `σ²₁ ≥ ⋯ ≥ σ²_q`
-and apply Theorem 2, whose convention is at the *ambient* index `q`, not at
-`rank(A)`, with `σ_j = 0` past the rank. **The Theorem 3 statements here are the
-corrected ones.** Two things that are *not* changed, and are easy to conflate with
-this: the paper's own block condition `1 ≤ r ≤ s ≤ rank(A)` is retained, and `Δ`
-is the paper's exact denominator rather than an arbitrary positive lower bound.
-
-**Theorem 1's printed sample endpoint conventions are inverted.** Its separation
-is an infimum over the two exterior rays `(−∞, λ̂_{s+1}] ∪ [λ̂_{r−1}, ∞)`, and the
-article defines `λ̂₀ = −∞` and `λ̂_{p+1} = +∞`. Those values make the corresponding
-ray the whole line at `r = 1` or `s = p`, so `δ = 0` and the hypothesis `δ > 0` is
-unsatisfiable at any block touching an end of the spectrum — including the top-`d`
-block, the common case in statistics. The intended reading is the opposite one,
-`λ̂₀ = +∞` and `λ̂_{p+1} = −∞`, which makes the missing ray empty, exactly as
-Theorem 2's population conventions do. This one is milder in kind than the
-others: it degrades a baseline theorem to vacuity rather than asserting something
-false. The
-Lean statement is unaffected — it phrases the separation as an intrinsic spectral
-condition and never used the printed conventions — and no declaration here claims
-to be the printed `δ`.
-
-## Palomar Registry entries
+## Palomar Registry submission
 
 Preparation only. Nothing here claims registration, acceptance, or peer review.
 
-| config | metadata | compares | source relationship | status |
-| --- | --- | --- | --- | --- |
-| `registry/yws-symmetric/comparator.json` | `registry/yws-symmetric/formalization.yaml` | Theorem 2, both conclusions; Corollary 1, both displays | `formalizes` | source-faithful — Theorem 2 exact, Corollary 1 with the inherited normalization written out |
-| `registry/yws-rectangular/comparator.json` | `registry/yws-rectangular/formalization.yaml` | Theorem 3, right and left, sine and aligned, plus the two singular-frame equivalences | `adapts` | source-corrected, as above |
+This repository now uses the conventional **single root entry**:
 
-**Two entries, and only two.** A general-index-set prototype of Theorem 2's first
-conclusion lived here until 2026-08-29. It proved the Palomar mechanics work and
-`yws-symmetric` superseded it; leaving a third configuration in a submission
-repository only invited the question of which one was the claim. It was retired
-from the authoritative repository too on 2026-08-30, when the embedded submission
-surface there was removed; git history is its archive.
-
-**The configuration directory is `registry/`, not `palomar/`.** It sat beside the
-Lean library directory `Palomar/` until 2026-08-29, and two paths differing only
-in case are one path on a case-insensitive filesystem, so a Windows or
-default-macOS checkout could conflate them or refuse operations. `Palomar/` is
-Lean source; `registry/` is submission configuration and metadata. Palomar selects
-both paths explicitly, so nothing about a submission depends on the name.
-
-A Palomar entry is one Comparator configuration, and one `formalization.yaml`
-records one relationship per source. The two paper-facing entries therefore carry
-their own metadata beside their own configuration, because Theorem 2 is formalized
-as printed while Theorem 3 is a documented correction. A submission selects both
-paths explicitly. The repository-root `formalization.yaml` is the repository-wide
-record and the default metadata path; it is not the metadata of either entry.
-
-Each Challenge states its theorems against Mathlib alone, with deliberate
-statement-side holes, and each Solution supplies the same declarations from the
-libraries here. `definition_names` is empty in both paper-facing configurations,
-deliberately: Comparator treats a listed name as a *definition hole* and stops
-comparing that definition's value, and every helper definition in these Challenges
-is fully specified, so listing them weakened the comparison rather than
-strengthening it. The clause-by-clause basis for what is selected, what is not,
-and why, is [`registry/YWS_SOURCE_CONTRACT.md`](registry/YWS_SOURCE_CONTRACT.md).
-
-Theorem 1 is deliberately not selected, for the reason in the previous section: a
-paper-facing statement of its printed `δ` would be a third corrected entry, not an
-exact one, and that scope decision has not been taken.
-
-## Where this comes from
-
-This repository is an **extraction**, and it carries the proof: `ForTauCeti`,
-`DavisKahan` and `YuWangSamworth2015` are here in full and are built here, so this
-is a substantive formalization in Palomar's sense and its metadata carries no
-`repository` key. `DavisKahan` is present because the Yu–Wang–Samworth package
-uses its Hilbert–Schmidt/Frobenius ideal theory; it is a dependency, not the
-subject.
-
-[`AIQ-Kitware/aiq-dkps-formalization`](https://github.com/AIQ-Kitware/aiq-dkps-formalization)
-remains **authoritative**: the mathematics is developed, reviewed and audited
-there, and this is a snapshot of those three packages taken from it. That is a
-statement about where work happens, not about where the proof lives.
-
-**Send changes upstream.** A fix made only here is lost at the next extraction.
-
-The source census and the audit and gate scripts are deliberately not extracted;
-they are maintenance machinery for the authoritative repository. Accordingly this
-repository makes no coverage claim beyond the tables above.
-
-## Building
-
-```bash
-lake exe cache get              # Mathlib oleans
-lake build                      # the mathematics
-lake build Palomar              # the entries; their Challenge modules carry holes
+```text
+Challenge.lean
+Solution.lean
+comparator.json
+formalization.yaml
+lakefile.toml
+lake-manifest.json
+lean-toolchain
+LICENSE
 ```
 
-## Verifying an entry
+The root Comparator selects ten declarations in one review surface:
+
+* Theorem 2: `YWSPalomar.theorem2_sinTheta`,
+  `YWSPalomar.theorem2_alignedFrame`;
+* Corollary 1: `YWSPalomar.corollary1_sinTheta`,
+  `YWSPalomar.corollary1_alignedVector`;
+* corrected Theorem 3: right/left sine and aligned-frame conclusions; and
+* the right/left equivalences between the Gram form and the paper's paired
+  singular-vector equations.
+
+Because the combined entry includes the corrected Theorem 3, its single source
+relationship is conservatively `adapts`. `formalization.yaml` then explains the
+finer per-result dispositions above rather than pretending Theorem 2 itself was
+changed.
+
+`Challenge.lean` imports Mathlib alone. `Solution.lean` composes the two
+previously verified implementation adapters under `Palomar/`; those adapters
+remain implementation modules only, not separate Palomar entries. Their
+Mathlib-only `SolutionPrelude` modules ensure Comparator-visible helper constants
+are elaborated before the larger proof development is imported.
+
+The clause-by-clause basis for the merged selection is
+`registry/YWS_SOURCE_CONTRACT.md`.
+
+## Building and verification
 
 ```bash
-python3 scripts/check_palomar_readiness.py        # static preflight, seconds
-scripts/verify_palomar.sh                         # + build + Comparator + NanoDa
-scripts/verify_palomar.sh yws-symmetric           # one entry
-scripts/verify_palomar.sh --fake-landrun          # if landrun is unavailable
+lake exe cache get
+lake build
+python3 scripts/check_solution_preludes.py
+python3 scripts/check_palomar_readiness.py
+scripts/verify_palomar.sh
 ```
 
-The preflight checks what can be checked without Lean: no submodules, no LFS
-pointers, no committed build artifacts, one root licence, every dependency pinned
-to a credential-free GitHub URL at a full SHA, the metadata shape, the Comparator
-configuration keys, and — the one that matters — that each Challenge's
-*transitive* import closure reaches no module in this repository.
-`verify_palomar.sh` then builds every declared library, including `Palomar`, which
-the default build deliberately excludes because its Challenge modules carry
-statement-side holes, and runs the real Comparator with the independent NanoDa
-kernel.
+The local verifier builds the root Challenge and Solution named by
+`comparator.json`, runs the static preflight, then runs Comparator with NanoDa and
+Lean kernel replay. It uses verification tools already on `PATH`; otherwise it
+can discover `~/.cache/palomar-tools-latest/bin` or the newest dated
+`~/.cache/palomar-tools-YYYYMMDD/bin` bundle.
 
-Both scripts live here rather than upstream because they ask whether *this*
-repository verifies. That is not a question the development repository can answer
-about itself.
+That is local preparation only. Palomar's own verifier and editorial review are
+the authority for a submission.
 
-Comparator, `lean4export` and NanoDa are external tools. `lean4export` reads this
-repository's oleans, so it must be built at the Lean in `lean-toolchain` —
-including the nested `lean4export` package inside a comparator checkout, whose own
-pin is not the one you set on the checkout. With the tools on PATH the underlying
-command is:
+## Repository lineage
 
-```bash
-lake env comparator registry/yws-symmetric/comparator.json
-```
-
-`lake env` is required: the exporter needs the Lake search path to find the
-compiled modules. Both configs pass Comparator, NanoDa and Lean's own kernel, with
-axiom closure exactly `propext`, `Quot.sound`, `Classical.choice`.
-
-That is local verification only. It is not Palomar verification, not acceptance,
-and not registration.
+This repository is an extraction containing the substantive proof sources
+`ForTauCeti`, `DavisKahan`, and `YuWangSamworth2015` in full.
+`AIQ-Kitware/aiq-dkps-formalization` remains the authoritative development
+repository: mathematics is developed and audited there, while this repository is
+the Palomar-facing snapshot. A mathematical fix made here should also be carried
+upstream before the next extraction.

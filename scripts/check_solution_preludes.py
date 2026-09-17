@@ -1,64 +1,50 @@
 #!/usr/bin/env python3
-"""Keep YWS Solution public vocabulary identical to its Mathlib-only Challenge.
+"""Keep the merged SolutionPrelude identical to the root Challenge vocabulary.
 
-Comparator recursively compares non-target constants used by selected theorem
-statements. Elaborating identical-looking helper definitions once under Mathlib
-and once under the full proof development can produce different ConstantInfo.
-The Solution therefore imports a Mathlib-only SolutionPrelude containing the
-Challenge vocabulary prefix. This checker makes source drift fail locally.
+The root Challenge deliberately places every non-target helper declaration for
+both YWS theorem families before any selected theorem. The Mathlib-only merged
+SolutionPrelude reproduces that entire declaration sequence in the same order,
+so environment-sensitive elaboration cannot differ between the two sides.
 """
 from __future__ import annotations
 
 from pathlib import Path
+import re
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
-
-ENTRIES = [
-    (
-        "yws-symmetric",
-        ROOT / "Palomar/YWSSymmetric/Challenge.lean",
-        ROOT / "Palomar/YWSSymmetric/SolutionPrelude.lean",
-        "namespace YWSPalomar",
-        "/-- **Theorem 2, first conclusion.**",
-        "end YWSPalomar",
-    ),
-    (
-        "yws-rectangular",
-        ROOT / "Palomar/YWSRectangular/Challenge.lean",
-        ROOT / "Palomar/YWSRectangular/SolutionPrelude.lean",
-        "namespace YWSRectangular",
-        "/-- **The Gram form of a right singular block is the paper's printed pair of",
-        "end YWSRectangular",
-    ),
-]
+CHALLENGE = ROOT / "Challenge.lean"
+PRELUDE = ROOT / "Palomar/YWS/SolutionPrelude.lean"
+TARGET_MARKER = "/-! ## Compared theorem declarations -/"
 
 
-def between(text: str, start: str, end: str, path: Path) -> str:
-    try:
-        i = text.index(start)
-        j = text.index(end, i)
-    except ValueError as ex:
-        raise RuntimeError(f"{path}: missing expected marker {ex}") from ex
-    return text[i:j].strip()
+def normalize(text: str) -> str:
+    text = re.sub(r"/--.*?-/", "", text, flags=re.S)
+    text = re.sub(r"/-!.*?-/", "", text, flags=re.S)
+    return " ".join(text.split())
 
 
 def main() -> int:
-    failed = False
-    for name, challenge, prelude, namespace, challenge_end, prelude_end in ENTRIES:
-        if not prelude.is_file():
-            print(f"FAIL  {name}: missing {prelude.relative_to(ROOT)}")
-            failed = True
-            continue
-        c = between(challenge.read_text(), namespace, challenge_end, challenge)
-        p = between(prelude.read_text(), namespace, prelude_end, prelude)
-        if c != p:
-            print(f"FAIL  {name}: SolutionPrelude does not exactly match Challenge vocabulary prefix")
-            print(f"      compare {challenge.relative_to(ROOT)} with {prelude.relative_to(ROOT)}")
-            failed = True
-        else:
-            print(f"  ok    {name}: SolutionPrelude exactly matches Challenge vocabulary prefix")
-    return 1 if failed else 0
+    if not CHALLENGE.is_file() or not PRELUDE.is_file():
+        print("FAIL  missing Challenge.lean or Palomar/YWS/SolutionPrelude.lean")
+        return 1
+    c = CHALLENGE.read_text()
+    p = PRELUDE.read_text()
+    try:
+        c0 = c.index("namespace YWSPalomar")
+        c1 = c.index(TARGET_MARKER, c0)
+        p0 = p.index("namespace YWSPalomar")
+    except ValueError as ex:
+        print(f"FAIL  missing expected vocabulary marker: {ex}")
+        return 1
+    c_vocab = c[c0:c1]
+    p_vocab = p[p0:]
+    if normalize(c_vocab) != normalize(p_vocab):
+        print("FAIL  merged SolutionPrelude does not match the complete Challenge vocabulary prefix")
+        print("      compare Challenge.lean with Palomar/YWS/SolutionPrelude.lean")
+        return 1
+    print("  ok    merged vocabulary: SolutionPrelude matches complete Challenge helper prefix")
+    return 0
 
 
 if __name__ == "__main__":

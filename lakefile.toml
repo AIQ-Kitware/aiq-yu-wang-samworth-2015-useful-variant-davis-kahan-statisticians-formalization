@@ -1,57 +1,44 @@
 name = "yws_2015_formalization"
 version = "0.1.0"
-# The default build is the substantive mathematics. Palomar Challenge/Solution
-# modules are built explicitly from the selected comparator.json files by
-# scripts/verify_palomar.sh, because Challenge declarations deliberately contain
-# statement-side holes and Challenge/Solution repeat the same declaration names
-# in separate environments.
-defaultTargets = ["YuWangSamworth2015"]
+defaultTargets = ["YuWangSamworth2015", "Challenge", "Solution"]
 
 [leanOptions]
 pp.unicode.fun = true
-# Avoid accidental free variables in theorem statements.
 autoImplicit = false
 
-# Tau Ceti, pinned. `ForTauCeti` below is the reusable-mathematics package whose
-# declarations already carry their final `TauCeti.*` namespaces; this dependency is
-# the released upstream it is written against.
 [[require]]
 name = "TauCeti"
 git = "https://github.com/TauCetiProject/TauCeti.git"
 rev = "1b39d420ac84ed9a5a7d536ce19b37818ad29c39"
 
-# Keep Mathlib last so this workspace owns the pin used by every library here and
-# by the Tau Ceti checkout. The revision is the one the extraction was verified at
-# and is recorded in `lake-manifest.json`.
 [[require]]
 name = "mathlib"
 scope = "leanprover-community"
 
-# The reusable-mathematics layer. A ForTauCeti module imports only `Mathlib.*`,
-# `TauCeti.*` and `ForTauCeti.*`. The option set mirrors the one Tau Ceti applies to
-# its own libraries, so a warning here is a warning upstream would see too.
 [[lean_lib]]
 name = "ForTauCeti"
 globs = ["ForTauCeti.*"]
 leanOptions = { warningAsError = true, weak.linter.mathlibStandardSet = true, weak.linter.style.longFile = 1500, weak.linter.style.longFileDefValue = 1500, weak.linter.style.header = false }
 
-# The Davis--Kahan development.
 [[lean_lib]]
 name = "DavisKahan"
 
-# The Yu--Wang--Samworth development.
 [[lean_lib]]
 name = "YuWangSamworth2015"
 srcDir = "YuWangSamworth2015"
 globs = ["YuWangSamworth2015.*"]
 leanOptions = { warningAsError = true, weak.linter.mathlibStandardSet = true, weak.linter.style.longFile = 1500, weak.linter.style.longFileDefValue = 1500, weak.linter.style.header = false }
 
-# The Palomar entries. Each Challenge states its theorems against Mathlib alone.
-# Each Solution first imports a Mathlib-only SolutionPrelude containing the exact
-# Challenge vocabulary prefix, then imports the larger proof development. This
-# keeps Comparator-visible helper constants stable across the two environments.
-# Intentionally not a default target: scripts/verify_palomar.sh builds the exact
-# Challenge and Solution modules selected by each Comparator configuration.
+# Internal Mathlib-only vocabulary module used by the root Solution.
 [[lean_lib]]
 name = "Palomar"
 globs = ["Palomar.*"]
+
+# Standard Palomar root modules.
+[[lean_lib]]
+name = "Challenge"
+roots = ["Challenge"]
+
+[[lean_lib]]
+name = "Solution"
+roots = ["Solution"]

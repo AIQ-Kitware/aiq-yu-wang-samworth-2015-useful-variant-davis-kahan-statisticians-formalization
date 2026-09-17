@@ -1,318 +1,214 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/mathlib-initiative/formalization.yaml/main/schema/formalization.schema.json
-#
-# Repository-wide metadata for the Yu-Wang-Samworth 2015 extraction.
-#
-# This repository carries the proof. It is an extraction of the corresponding
-# packages from AIQ-Kitware/aiq-dkps-formalization, which remains authoritative;
-# see README.md for what that means for updates.
-#
-# A Palomar entry is one Comparator configuration, not a whole repository, and
-# the two prepared entries relate to the source differently. Each therefore
-# carries its own metadata, which is what a submission should select:
-#
-#   registry/yws-symmetric/comparator.json    registry/yws-symmetric/formalization.yaml
-#   registry/yws-rectangular/comparator.json  registry/yws-rectangular/formalization.yaml
-#
-# The directory is `registry/`, not `palomar/`: a path differing only in case from
-# the Lean library directory `Palomar/` is the same path on Windows and on macOS.
-#
-# This file is the repository-wide record and the default metadata path.
 version: v0.4
 
 project:
-  name: 'Yu-Wang-Samworth 2015: the population-gap Davis-Kahan theorems'
+  name: "Yu-Wang-Samworth 2015: population-gap eigenspace and singular-subspace perturbation bounds"
   description: >-
-    A machine-checked Lean 4 formalization of every numbered result of Yi Yu,
-    Tengyao Wang and Richard J. Samworth, "A useful variant of the Davis-Kahan
-    theorem for statisticians" (Biometrika 102 (2015) 315-323): Theorem 1, both
-    conclusions of Theorem 2, both displays of Corollary 1, Theorem 3 for right
-    and left singular subspaces, and Appendix Lemma A1.
+    A machine-checked Lean 4 formalization of the principal population-gap
+    perturbation results of Yi Yu, Tengyao Wang and Richard J. Samworth, "A
+    useful variant of the Davis-Kahan theorem for statisticians" (Biometrika
+    102 (2015) 315-323). This single Palomar entry compares both conclusions of
+    Theorem 2 and both displays of Corollary 1 for eigenspaces of real symmetric
+    matrices, together with the right- and left-singular-subspace conclusions of
+    Theorem 3 for general real matrices and two supporting equivalences between
+    its Gram-eigenvector formulation and the paper's paired singular-vector
+    equations.
 
-    The paper's contribution is that the eigenvalue separation in a sin-Theta
-    bound may be taken entirely inside the population spectrum, rather than
-    between the population eigenvalues and the unobserved sample ones. The
-    classical separation can vanish while the population spectrum is well
-    separated, and the paper gives an explicit five-by-five example where it
-    does: Sigma = diag(50,40,30,20,10), Sigma-hat = diag(54,37,32,23,21), at the
-    eigenvectors for the second, third and fourth largest eigenvalues (r = 2,
-    s = 4 in the paper's one-based indexing), where the classical separation is
-    zero and the population gap is 10.
+    The common idea is that every separation hypothesis in Theorems 2 and 3 is
+    stated entirely in terms of the population object. Theorem 2 uses the
+    population eigenvalue gap
+    min(lambda_(r-1)-lambda_r, lambda_s-lambda_(s+1)); Theorem 3 applies the
+    same idea to the squared singular spectrum, with the additional factor
+    (2 sigma_1 + ||A-hat-A||_op). No sample eigenvalue or singular-value gap is
+    assumed, so the sample frame is arbitrary among admissible orthonormal
+    frames at the selected block, including under multiplicity.
 
-    Theorem 2 and Corollary 1 require only population eigengaps, and the
-    corrected Theorem 3 likewise uses only population singular-value gaps: no
-    sample eigengap or sample singular-value gap appears in any of those
-    results. The sample operator may therefore have a repeated eigenvalue at the
-    selected block, where its eigenframe is not determined, and those theorems
-    quantify over every admissible orthonormal sample eigenframe rather than over
-    one chosen eigenbasis; a repository witness exhibits a sample operator for
-    which every unit vector of the plane is admissible. Theorem 1 is the
-    classical baseline the paper argues against, and its separation is mixed by
-    design.
-
-    The results are represented at different distances from the printed page,
-    and the repository says which is which rather than averaging them. Theorem 2
-    has source-exact paper-facing statements. Corollary 1 writes out the unit
-    normalization its standalone printed display omits: the paper introduces the
-    corollary as the d = 1 case of Theorem 2, whose frames have orthonormal
-    columns, but the standalone display says only that v and v-hat satisfy the two
-    eigenvector equations, and without normalization its second display is false
-    -- scaling v-hat preserves every printed hypothesis while ||v-hat - v|| does
-    not -- which this repository refutes. Theorem 3 is a documented correction of
-    a false printed boundary convention: the printed
-    sigma^2_{rank(A)+1} := -infinity makes the denominator infinite at the rank
-    boundary, so the printed bound asserts that two singular subspaces which can
-    be orthogonal coincide; that is refuted here by a compiled counterexample,
-    and the formal statements use the ambient Gram-spectrum convention the
-    paper's own proof requires, while retaining the paper's own block condition
-    1 <= r <= s <= rank(A). Printed Equation (4) omits a square and is likewise
-    refuted as printed. Theorem 1's printed sample endpoint conventions make it
-    vacuous at any block touching an end of the spectrum; the Lean statement uses
-    an intrinsic spectral separation instead and does not claim to be the printed
-    delta. Appendix Lemma A1 is proved in a form more general than printed.
-
-    Also formalized: the Section 1 numerical illustration above, both Section 2
-    sharpness constructions, the deterministic content of the Section 3 audit of
-    statistical practice, and rank-one singular-vector corollaries beyond the
-    printed paper.
+    The selected results have deliberately different source dispositions.
+    Theorem 2 is source-exact. Corollary 1 writes out the unit normalization
+    inherited from its introduction as the d=1 case of Theorem 2; the standalone
+    printed display omits that normalization and its second conclusion is false
+    without it. Theorem 3 is source-corrected: its printed convention
+    sigma^2_(rank(A)+1) := -infinity makes the denominator infinite at a rank
+    boundary and yields a false assertion. The compared statement instead uses
+    the ambient Gram-spectrum convention used by the paper's own proof, with
+    singular values zero past rank, while retaining the printed restriction
+    1 <= r <= s <= rank(A). Because this one entry contains that correction, its
+    source relationship is conservatively recorded as `adapts`.
   authors:
-  - Jon Crall
-  - Edward Wang
-  license: Apache-2.0
+    - "Jon Crall"
+    - "Edward Wang"
+  license: "Apache-2.0"
   responsible_maintainers:
-  - Jon Crall
-
-# `repository` is omitted deliberately. Current Palomar policy omits it when the
-# submitted repository contains the substantive development, and records that
-# default as `substantive-development`. This repository physically contains the
-# proof source -- ForTauCeti, DavisKahan and YuWangSamworth2015, copied verbatim
-# and built here -- so it is a substantive development and not a thin wrapper.
-# `repository.substantive_formalization` is for thin wrappers, which this is not.
-# The extraction lineage is prose, in README.md, where it can be stated
-# accurately.
+    - "Jon Crall"
 
 classification:
-  arxiv:
-  - math.ST
-  - math.FA
+  arxiv: ["math.ST", "math.FA"]
   msc2020:
-  - 62H25
-  - 47A55
-  - 15A42
-  - 65F15
+    - "62H25"
+    - "47A55"
+    - "15A42"
+    - "15A18"
+    - "65F15"
 
 sources:
-- title: A useful variant of the Davis-Kahan theorem for statisticians
-  authors:
-  - Yi Yu
-  - Tengyao Wang
-  - Richard J. Samworth
-  id: doi:10.1093/biomet/asv008
-  type: paper
-  location: Biometrika 102(2), 2015, 315-323
-  relationship: formalizes
-  note: >-
-    Published Biometrika numbering. The relationship recorded here is the
-    repository-wide one, and it is `formalizes` because most of the paper is
-    formalized at its printed statement; it is not the relationship of every
-    individual result, and a Palomar submission should select the per-entry
-    metadata instead. Precisely: Theorem 2's two conclusions are formalized and
-    compared at the printed statement, with no added hypothesis and no weakened
-    conclusion, and Corollary 1's two displays are compared with the unit
-    normalization inherited from its d = 1 derivation from Theorem 2 written out,
-    which the standalone printed display omits and without which its second
-    display is false -- together those are `registry/yws-symmetric`, whose
-    metadata records `formalizes` and describes the entry as source-faithful
-    rather than exact. Theorem 3 is compared in a corrected form, because its printed
-    rank-boundary convention is false and is refuted here; that is
-    `registry/yws-rectangular`, whose metadata records `adapts`. Theorem 1 and
-    Appendix Lemma A1 are formalized here but are not compared by any Comparator
-    entry. The clause-by-clause basis for all of this is
-    `registry/YWS_SOURCE_CONTRACT.md`.
-  author_endorsement: not-contacted
+  - title: "A useful variant of the Davis-Kahan theorem for statisticians"
+    authors: ["Yi Yu", "Tengyao Wang", "Richard J. Samworth"]
+    id: "doi:10.1093/biomet/asv008"
+    type: "paper"
+    location: "Biometrika 102(2), 2015, 315-323"
+    relationship: "adapts"
+    note: >-
+      Published Biometrika numbering. The single relationship is `adapts`
+      because one selected family, Theorem 3, corrects a false printed endpoint
+      convention. The selection is otherwise more specific: Theorem 2's two
+      conclusions are compared at the printed statement; Corollary 1's two
+      displays make explicit the unit normalization inherited from their d=1
+      derivation from Theorem 2; and Theorem 3 keeps the paper's block condition
+      but replaces sigma^2_(rank(A)+1) := -infinity by the ambient Gram-spectrum
+      convention required by the paper's own proof. The clause-by-clause basis for the merged selection is
+      `registry/YWS_SOURCE_CONTRACT.md`.
+    author_endorsement: "not-contacted"
 
 status:
   scope: >-
-    Formalized in this repository: every numbered result of the paper -- Theorem
-    1, both conclusions of Theorem 2, both displays of Corollary 1, Theorem 3 for
-    right and left singular subspaces with sine and aligned-frame conclusions,
-    and Appendix Lemma A1 -- together with the Section 1 numerical illustration,
-    both Section 2 sharpness constructions, the deterministic content of the
-    Section 3 audit, and the three source-defect refutations.
+    Compared by the root `comparator.json`: Theorem 2, both conclusions;
+    Corollary 1, both displays with inherited unit normalization explicit;
+    corrected Theorem 3 for right and left singular subspaces, sine and
+    aligned-frame conclusions; and the two equivalences showing that the Gram
+    formulation of a source-selected singular block agrees with the paper's
+    paired singular-vector equations.
 
-    Compared by Comparator: Theorem 2 and Corollary 1 (`registry/yws-symmetric`,
-    source-faithful) and Theorem 3 (`registry/yws-rectangular`, source-corrected,
-    together with two equivalences showing that the Gram form of a singular block
-    is the paper's printed pair of singular-vector equations at the indices the
-    source rank condition selects). Not compared: Theorem 1, Appendix Lemma A1,
-    the sharpness material and the refutations.
+    Formalized in the wider repository but not selected by this Comparator:
+    Theorem 1, Appendix Lemma A1, the Section 1 numerical illustration, the
+    Section 2 sharpness constructions, the deterministic Section 3 audit, and
+    the source-defect counterexamples. Theorem 1 is not selected because its
+    printed sample endpoint conventions make its printed mixed separation zero
+    at any block touching an endpoint; the Lean development instead uses an
+    intrinsic spectral separation and does not claim to reproduce that printed
+    delta.
 
-    Theorem 1 is withheld from comparison because writing its printed mixed
-    separation exactly would mean reproducing endpoint conventions that make the
-    theorem vacuous at any block touching either end of the spectrum. The
-    published article was read directly on 2026-08-29 and does print them that
-    way: with the rays (-inf, lambda-hat_{s+1}] u [lambda-hat_{r-1}, inf) and the
-    conventions lambda-hat_0 = -inf, lambda-hat_{p+1} = inf, the ray is the whole
-    line at r = 1 or s = p and the separation is 0. Selecting Theorem 1 would
-    therefore mean a third entry with a disclosed correction, which is a scope
-    decision that has not been taken. `registry/YWS_SOURCE_CONTRACT.md` row T1
-    records it.
-
-    There are two Comparator configurations here and only two. A general-index-set
-    prototype of Theorem 2's first conclusion was carried until 2026-08-29;
-    `registry/yws-symmetric` superseded it and it was removed, because a third
-    configuration in a submission repository only invites the question of which
-    one is the claim. It was retired from the authoritative repository too on
-    2026-08-30, when the embedded submission surface there was removed.
-
-    The Challenge modules carry the deliberate statement-side holes the
-    Comparator convention requires; no library declaration is left incomplete.
-    The source census and audit machinery are not extracted here, so this
-    repository makes no coverage claim beyond what is listed.
+    `Challenge.lean` imports Mathlib alone. Its deliberate `sorry` terms are the
+    statement-side holes required by Comparator; no substantive library
+    declaration is left incomplete.
   sorry_count: 0
   sorry_in_definitions: 0
   axioms: []
   main_results:
-  - name: YWSPalomar.theorem2_sinTheta
-    statement: 'Theorem 2, first conclusion: the Frobenius sin-Theta distance between the population
-      and sample eigenspaces of a block is at most 2 min(sqrt d |E|_op, |E|_F) / Delta, where
-      Delta is the population boundary gap of the block. The printed statement.'
-  - name: YWSPalomar.theorem2_alignedFrame
-    statement: 'Theorem 2, second conclusion: some orthogonal d-by-d matrix O-hat satisfies
-      |V-hat O-hat - V|_F <= 2^(3/2) min(sqrt d |E|_op, |E|_F) / Delta, against the supplied
-      population frame. The printed statement.'
-  - name: YWSPalomar.corollary1_sinTheta
-    statement: 'Corollary 1, first display: the rank-one case, sin Theta(v-hat, v) <= 2 |E|_op
-      / Delta_j with Delta_j the neighbouring population gap, with the unit normalization the
-      standalone printed display omits made explicit.'
-  - name: YWSPalomar.corollary1_alignedVector
-    statement: 'Corollary 1, second display: under the printed orientation condition, |v-hat
-      - v| <= 2^(3/2) |E|_op / Delta_j, with the unit normalization made explicit. Without it
-      the printed display is false, and this repository refutes it.'
-  - name: YWSRectangular.theorem3_rightSinTheta
-    statement: 'Theorem 3, right singular subspaces, sine conclusion, at the source block
-      1 <= r <= s <= rank(A), with the rank-boundary convention CORRECTED from
-      sigma^2_{rank(A)+1} to the ambient singular-value sequence. Not the literal printed
-      statement, which is false; see the source note.'
-  - name: YWSRectangular.theorem3_rightAlignedFrame
-    statement: 'Theorem 3, right singular subspaces, aligned-frame conclusion, same scope and
-      same correction.'
-  - name: YWSRectangular.theorem3_leftSinTheta
-    statement: 'Theorem 3, left singular subspaces, sine conclusion, same scope and same
-      correction, with the ambient convention read at p.'
-  - name: YWSRectangular.theorem3_leftAlignedFrame
-    statement: 'Theorem 3, left singular subspaces, aligned-frame conclusion, same scope and
-      same correction.'
-  - name: YWSRectangular.isRightSingularBlock_iff_pairedSingularVectors
-    statement: 'At the indices the source rank condition selects, the Gram-eigenvector form
-      A^T A v_i = sigma_i^2 v_i used in the Theorem 3 statements is equivalent to the paper''s
-      printed pair A v_j = sigma_j u_j, A^T u_j = sigma_j v_j.'
-  - name: YWSRectangular.isLeftSingularBlock_iff_pairedSingularVectors
-    statement: 'The same equivalence for left singular blocks.'
+    - name: "YWSPalomar.theorem2_sinTheta"
+      statement: >-
+        Theorem 2, first conclusion: the Frobenius sin-Theta distance between
+        population and sample eigenspaces is at most
+        2 min(sqrt(d)||E||_op,||E||_F)/Delta for the exact population boundary
+        gap Delta, with no sample eigengap.
+    - name: "YWSPalomar.theorem2_alignedFrame"
+      statement: >-
+        Theorem 2, second conclusion: an orthogonal block rotation aligns the
+        supplied sample frame to the supplied population frame within
+        2^(3/2) min(sqrt(d)||E||_op,||E||_F)/Delta.
+    - name: "YWSPalomar.corollary1_sinTheta"
+      statement: >-
+        Corollary 1, first display, with the unit normalization inherited from
+        its d=1 derivation from Theorem 2 made explicit.
+    - name: "YWSPalomar.corollary1_alignedVector"
+      statement: >-
+        Corollary 1, second display under the printed orientation condition,
+        with the inherited unit normalization explicit; without normalization
+        the standalone printed display is false.
+    - name: "YWSRectangular.theorem3_rightSinTheta"
+      statement: >-
+        Corrected Theorem 3, right singular subspaces, sine conclusion, at the
+        printed block 1 <= r <= s <= rank(A), using the ambient singular-value
+        endpoint convention instead of the false printed rank-boundary one.
+    - name: "YWSRectangular.theorem3_rightAlignedFrame"
+      statement: >-
+        Corrected Theorem 3, right singular subspaces, aligned-frame conclusion,
+        with the same source block restriction and endpoint correction.
+    - name: "YWSRectangular.theorem3_leftSinTheta"
+      statement: >-
+        Corrected Theorem 3, left singular subspaces, sine conclusion, with the
+        ambient convention read in the left Gram spectrum.
+    - name: "YWSRectangular.theorem3_leftAlignedFrame"
+      statement: >-
+        Corrected Theorem 3, left singular subspaces, aligned-frame conclusion.
+    - name: "YWSRectangular.isRightSingularBlock_iff_pairedSingularVectors"
+      statement: >-
+        At the positive singular values selected by the paper's rank condition,
+        the right Gram-eigenvector formulation is equivalent to the paper's
+        paired singular-vector equations.
+    - name: "YWSRectangular.isLeftSingularBlock_iff_pairedSingularVectors"
+      statement: >-
+        The corresponding equivalence for left singular blocks.
 
 automation:
   methods:
-  - method: agent
-    models:
-    - claude-opus-5
-    - claude-opus-4-8
-    - claude-fable-5
-    framework: Claude Code
-    tool_setup: >-
-      Agents worked directly in the repository with the Lean toolchain, running
-      `lake build` and the repository's own gate suite. Model attribution is
-      recorded per commit in Co-Authored-By trailers and per declaration in the
-      Mathlib-style `Authors:` module headers, which are a provenance record
-      naming models alongside the humans who directed the work and are not a claim
-      of authorship in the `project.authors` sense. The authoritative repository
-      also carries a measured token/turn ledger under `.llm_resource_tally/`; it
-      is not extracted here, and no quantity from it is restated in this file.
-  - method: agent
-    models:
-    - gpt-5.6-terra
-    - gpt-5.6-sol
-    framework: OpenAI Codex CLI
-    tool_setup: >-
-      A smaller share of the work was done by GPT-based agents under the OpenAI
-      Codex CLI rather than under Claude Code. Recorded separately rather than
-      folded into the Claude Code record, which would have been inaccurate; the
-      authoritative repository's ledger distinguishes the two backends by name.
-  - method: manual
-    framework: n/a
-    tool_setup: >-
-      The human maintainer set scope and priorities, ran builds and audits,
-      inspected theorem interfaces, adjudicated source-fidelity questions,
-      accepted or rejected proposed repairs, and decided repository policy.
-  spend_usd: subscription-based; not tracked
+    - method: "agent"
+      models:
+        - "claude-opus-5"
+        - "claude-opus-4-8"
+        - "claude-fable-5"
+      framework: "Claude Code"
+      tool_setup: >-
+        Agents worked directly in the repository with the Lean toolchain,
+        running `lake build` and repository checks. Model attribution is also
+        recorded in commit trailers and Mathlib-style module headers as
+        provenance; those headers are not the `project.authors` identity field.
+        The authoritative development repository carries a more detailed
+        resource ledger that is not duplicated here.
+    - method: "agent"
+      models:
+        - "gpt-5.6-terra"
+        - "gpt-5.6-sol"
+      framework: "OpenAI Codex CLI"
+      tool_setup: >-
+        GPT-based agents also contributed through the OpenAI Codex CLI; the
+        authoritative development repository records that backend separately.
+    - method: "manual"
+      framework: "n/a"
+      tool_setup: >-
+        The human maintainer set scope and priorities, ran builds and audits,
+        inspected theorem interfaces, adjudicated source-fidelity questions,
+        accepted or rejected repairs, and decided repository policy.
+  spend_usd: "subscription-based; not tracked"
   notes: >-
     This is a heavily agent-authored formalization with human direction and
-    review. The Lean kernel is the proof checker. Mechanical checks do not
-    establish that a Lean statement says what a paper says, which is why the
-    selection here rests on a clause-by-clause source contract rather than on
-    declaration names.
+    review. Kernel checking establishes the proofs, while source correspondence
+    was separately audited against a clause-by-clause source contract.
   prompting_notes: >-
-    Work was directed by task, not by prompt template: a scope decision from the
-    maintainer, then autonomous proof and audit work against the source census.
-    Adversarial review prompts are part of the audit record in the authoritative
-    repository.
+    Work was directed by task rather than one fixed prompt template, with
+    separate implementation and adversarial source-audit passes.
 
 fidelity:
   divergences: >-
-    Four points where this development departs from the printed paper, all
-    machine-checked or documented rather than concealed.
+    The combined selection has two disclosed source qualifications.
 
-    (1) Printed Equation (4). The rewrite of sin^2(2 theta) in terms of
-    |v-hat - v|^2 omits a square on the factor (2 - |v-hat - v|^2). The corrected
-    identity is proved and the printed polynomial is refuted at inner product
-    3/5. Not part of any compared entry.
+    First, the standalone printed Corollary 1 omits the unit normalization that
+    its introduction as the d=1 case of Theorem 2 supplies. The second display
+    is false without it: with SigmaHat = Sigma and vHat = 2v, the homogeneous
+    eigenvector equations and orientation condition hold while the perturbation
+    is zero and ||vHat-v|| is not. The compared statements write the inherited
+    normalization explicitly.
 
-    (1b) The standalone printed Corollary 1 omits the unit normalization its own
-    d = 1 reading supplies, and its second display is false without it: with
-    SigmaHat = Sigma and v-hat = 2v every printed hypothesis holds, the
-    perturbation is zero, and ||v-hat - v|| = ||v|| exceeds the zero bound.
-    Refuted by `corollary1_printed_unnormalized_counterexample`. The compared
-    statements write the normalization out; the source relationship stays
-    `formalizes`, because the hypothesis is the paper's own from one sentence
-    earlier, but no claim of 'no added hypothesis' is made for Corollary 1.
+    Second, Theorem 3's printed convention sigma^2_(rank(A)+1) := -infinity is
+    false at a rank boundary. It makes the denominator infinite and can force a
+    zero bound for orthogonal singular subspaces. The compared statements use
+    the ambient Gram-spectrum convention employed by the paper's proof, with
+    singular values zero past rank, while retaining 1 <= r <= s <= rank(A).
 
-    (2) Theorem 3's printed convention sigma^2_{rank(A)+1} := -infinity makes the
-    denominator infinite when the block ends at rank(A), so the printed bound
-    asserts that two singular subspaces which can be orthogonal coincide;
-    refuted by two rank-one orthogonal projections of the plane, for which the
-    sin-Theta Frobenius norm is 1. The compared Theorem 3 statements use the
-    ambient-index convention the paper's own proof uses, with singular values
-    zero past the rank, and retain the paper's own block condition
-    1 <= r <= s <= rank(A). The yws-rectangular entry is therefore
-    source-corrected, not exact, and its metadata records `adapts`.
-
-    (3) Theorem 1's printed conventions lambda-hat_0 = -infinity and
-    lambda-hat_{p+1} = infinity are inverted for the exterior rays its separation
-    uses, so the printed delta is 0 and the hypothesis delta > 0 is unsatisfiable
-    at any block with r = 1 or s = p. The Lean statement phrases the separation
-    as an intrinsic spectral condition and never used the printed conventions, so
-    the development is unaffected; what is affected is any claim that a formal
-    statement IS the printed delta, and no such claim is made. Not part of any
-    compared entry.
-
-    Beyond these, the compared Theorem 2 statements are the printed ones, with no
-    added hypothesis and no weakened conclusion, and the compared Corollary 1
-    statements differ from the printed display only by the normalization in (1b);
-    in particular no sample eigengap is introduced and the sample eigenframe is an
-    arbitrary admissible one. Lean indices are zero-based throughout, so a printed
-    block 1 <= r <= s <= p appears as r <= s together with s < p.
+    Two additional printed defects are formalized elsewhere but not selected:
+    Equation (4) omits a square, and Theorem 1's sample endpoint conventions
+    invert its exterior rays and make its positive-separation hypothesis
+    impossible at end blocks. Theorem 2 itself is selected at the printed
+    statement with no added sample-gap hypothesis and no weakened conclusion.
 
 review:
-  status: self-assessed
+  status: "self-assessed"
   reviewers:
-  - Jon Crall
+    - "Jon Crall"
   notes: >-
-    No external peer review. What has happened: kernel verification of every
-    claimed declaration by `lake build`; Comparator, the independent NanoDa
-    kernel and Lean's own kernel accepting both entries, with axiom closure
-    exactly propext, Quot.sound and Classical.choice; repeated adversarial source
-    audits in the authoritative repository, several of which found real defects
-    that are recorded in its census -- including, in the pass that produced these
-    entries, that Theorem 3's aligned-frame conclusion was not stated in the
-    shape the paper prints, that its source rank condition had been dropped, that
-    its denominator was a lower bound rather than the printed minimum, and that
-    the Section 1 illustration had been attributed to the wrong block -- and
-    human coordinator review of scope, theorem interfaces and repair decisions.
+    No external peer review. Local preparation has included Lean kernel builds,
+    Comparator, NanoDa replay, and repeated adversarial source audits. Earlier
+    audits found and corrected material presentation mismatches, including the
+    Theorem 3 source rank restriction, exact-denominator requirement and
+    aligned-frame shape. The merged root layout must be re-run through the same
+    mechanical suite before submission because changing module composition can
+    affect Comparator even when theorem types are unchanged.

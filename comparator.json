@@ -1,7 +1,11 @@
 {
-  "challenge_module": "Palomar.YWSRectangular.Challenge",
-  "solution_module": "Palomar.YWSRectangular.Solution",
+  "challenge_module": "Challenge",
+  "solution_module": "Solution",
   "theorem_names": [
+    "YWSPalomar.theorem2_sinTheta",
+    "YWSPalomar.theorem2_alignedFrame",
+    "YWSPalomar.corollary1_sinTheta",
+    "YWSPalomar.corollary1_alignedVector",
     "YWSRectangular.theorem3_rightSinTheta",
     "YWSRectangular.theorem3_rightAlignedFrame",
     "YWSRectangular.theorem3_leftSinTheta",
